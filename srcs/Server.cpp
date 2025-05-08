@@ -1,4 +1,5 @@
-#include "../Includes/Server.hpp"
+#include "../includes/Server.hpp"
+
 
 
 /*---------------------- Canonical orthodox form ----------------------*/
@@ -51,6 +52,7 @@ void Server::Start_Server()
 						this->handleNewConnection();
 					else
 					{
+						this->handleClientMessage(this->polling[i].fd);
 						// handlClientMessage
 					}
 				}
@@ -121,8 +123,39 @@ void Server::handleNewConnection()
 
 void Server::handleClientMessage(int clientFd)
 {
+	int			BytesRead;
+	char		buffer[1024];
+
+	memset(buffer, 0, 1024); // or 1024 - 1 = 1023
+	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
+	if (BytesRead == 0)
+		this->handleClientDisconnect(clientFd);
+	else if (BytesRead < 0)
+		throw std::runtime_error( "Error: Failed to receive data from socket using recv()");
 }
 
 void Server::handleClientDisconnect(int clientFd)
 {
+	for (size_t i = 0; i < this->clients.size(); i++)
+	{
+		if (this->clients[i]->Clientfd == clientFd)
+		{
+			delete this->clients[i];
+			this->clients.erase(this->clients.begin() + i);
+			break;
+		}
+	}
+
+	for (size_t i = 0; i < this->polling.size(); i++)
+	{
+		if (this->polling[i].fd == clientFd)
+		{
+			this->polling.erase(this->polling.begin() + i);
+			break;
+		}
+	}
+
+	close (clientFd);
+
+	std::cout << "Client " << clientFd << " disconnected" << std::endl; // u can add this to client destructor
 }

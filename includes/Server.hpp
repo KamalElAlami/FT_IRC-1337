@@ -11,6 +11,9 @@
 #include <poll.h>
 #include <vector>
 
+#include <cstring>
+#include <unistd.h>
+
 
 class Server
 {
