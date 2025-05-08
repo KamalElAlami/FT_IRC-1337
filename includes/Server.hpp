@@ -44,6 +44,11 @@ class Server
 		void	handleNewConnection();
 		void	handleClientMessage(int clientFd);
 		void	handleClientDisconnect(int clientFd);
+		void	ParseCommand(int clientFd, std::string const & line);
+		
+		/*---- Utiles method's ----*/
+		std::vector<std::string> splitBySpaces(const std::string& middle);
+
 };
 
 #endif

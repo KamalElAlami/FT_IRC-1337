@@ -1,7 +1,5 @@
 #include "../includes/Server.hpp"
 
-
-
 /*---------------------- Canonical orthodox form ----------------------*/
 Server::Server(int _fd, int _Port) : SerSockFd(_fd), Port(_Port) {}
 Server::~Server() {}
@@ -32,6 +30,7 @@ int Server::get_SerSockFd() const {
 int	Server::get_Port() const {
 	return (this->Port);
 }
+
 
 /*---------------------- Server method's ----------------------*/
 
@@ -124,14 +123,31 @@ void Server::handleNewConnection()
 void Server::handleClientMessage(int clientFd)
 {
 	int			BytesRead;
+	size_t		pos = 0;
 	char		buffer[1024];
 
-	memset(buffer, 0, 1024); // or 1024 - 1 = 1023
+	memset(buffer, 0, 1024);
 	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
+	// std::cout << "Buffer : " << buffer << std::endl;
 	if (BytesRead == 0)
 		this->handleClientDisconnect(clientFd);
 	else if (BytesRead < 0)
 		throw std::runtime_error( "Error: Failed to receive data from socket using recv()");
+	
+	buffer[BytesRead] = '\0';
+	std::string		message(buffer);
+	std::string		line;
+	while ((pos = message.find("\r\n")) != std::string::npos)
+	{
+		line = message.substr(0, pos);
+		message.erase(0, pos + 2);
+		if (!line.empty())
+		{
+			std::cout << "Received from client " << clientFd << ": " << line << std::endl;
+			// add her commend parsing;
+		}
+	}
+	
 }
 
 void Server::handleClientDisconnect(int clientFd)
@@ -158,4 +174,58 @@ void Server::handleClientDisconnect(int clientFd)
 	close (clientFd);
 
 	std::cout << "Client " << clientFd << " disconnected" << std::endl; // u can add this to client destructor
+}
+
+
+std::vector<std::string> Server::splitBySpaces(const std::string& middle)
+{
+	std::vector<std::string>	params;
+	size_t						start = 0, end;
+
+	while ((end = middle.find(' ', start)) != std::string::npos)
+	{
+		if (end > start)
+			params.push_back(middle.substr(start, end - start));
+		start = end + 1;
+	}
+	if (start < middle.length())
+		params.push_back(middle.substr(start));
+
+    return (params);
+}
+
+
+
+void	Server::ParseCommand(int clientFd, std::string const & line)
+{
+	size_t						CmdPos = 0, ParamStart = 0;
+	size_t						start = 0, end = 0;
+	std::string					Command;
+	std::string					middle;
+	std::vector <std::string>	params;
+
+	CmdPos = line.find(' ');
+	if (CmdPos == std::string::npos)
+		Command = line;
+	else
+		Command = line.substr(0, CmdPos);
+	for (size_t i = 0; i < Command.length(); i++)
+		Command[i] = toupper(Command[i]);
+
+	if (CmdPos != std::string::npos)
+	{
+		ParamStart = CmdPos + 1;
+		size_t triStart = line.find(" :", ParamStart);
+		if (triStart != std::string::npos)
+		{
+			middle = line.substr(ParamStart, triStart - ParamStart);
+			params = this->splitBySpaces(middle);
+			params.push_back(line.substr(triStart + 2));
+		}
+		else
+		{
+			middle = line.substr(ParamStart);
+			params = this->splitBySpaces(middle);
+		}
+	}
 }
