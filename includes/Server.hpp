@@ -20,9 +20,9 @@ class Server
 	private:
 		int							SerSockFd;
 		int							Port;
-		std::string					Password;
-		std::vector <Client*>		clients;
-		std::vector <struct pollfd>	polling;
+		std::string						Password;
+		std::vector <Client*>			clients;
+		std::vector <struct pollfd>		polling;
 
 	public:
 		/*---- Canonical orthodox form ----*/
@@ -44,7 +44,15 @@ class Server
 		void	handleNewConnection();
 		void	handleClientMessage(int clientFd);
 		void	handleClientDisconnect(int clientFd);
-		void	ParseCommand(int clientFd, std::string const & line);
+		void	ParseCommand(Client* client, std::string const & line);
+		int		handlePass(Client* client, const std::vector<std::string>& params);
+		int		handleNick(Client* client, const std::vector<std::string>& params);
+		int		handleUser(Client* client, const std::vector<std::string>& params);
+		void	removeClient(int ClientFd);
+		void	sendToClient(Client* client, const std::string& message);
+		void	checkRegistration(Client* client);
+
+		/*---- this for tomorrow ----*/
 		
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);

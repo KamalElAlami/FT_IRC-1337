@@ -31,9 +31,7 @@ int	Server::get_Port() const {
 	return (this->Port);
 }
 
-
 /*---------------------- Server method's ----------------------*/
-
 void Server::Start_Server()
 {
 	try {
@@ -50,16 +48,13 @@ void Server::Start_Server()
 					if(this->polling[i].fd == this->SerSockFd)
 						this->handleNewConnection();
 					else
-					{
 						this->handleClientMessage(this->polling[i].fd);
-						// handlClientMessage
-					}
 				}
 			}
 		}
 	}
 	catch(const std::exception& e) {
-		// dont forget to close all FDs
+		// dont forget to close all FDs & delete all clients
 		std::cerr << e.what() << std::endl;
 		exit (1);
 	}
@@ -105,11 +100,9 @@ void Server::handleNewConnection()
 
 	_client.Clientfd = accept(this->SerSockFd, (struct sockaddr *)&addr, &addr_len);
 	if (_client.Clientfd == -1)
-	{
 		throw std::runtime_error( "Error: Failed to accept new connection using accept()");
-	}
 	
-		_client.address = inet_ntoa(addr.sin_addr);
+	_client.address = inet_ntoa(addr.sin_addr);
 	Client *tmp = new Client(_client); // We should should delet it
 	this->clients.push_back(tmp);
 	client_pollfd.fd = _client.Clientfd;
@@ -122,60 +115,50 @@ void Server::handleNewConnection()
 
 void Server::handleClientMessage(int clientFd)
 {
-	int			BytesRead;
-	size_t		pos = 0;
-	char		buffer[1024];
+	int				BytesRead;
+	char			buffer[1024];
+	size_t			pos = 0;
+	Client			*client;
+	std::string		line;
+
+	for (size_t i = 0; i < this->clients.size(); i++)
+	{
+		if (this->clients[i]->Clientfd == clientFd)
+		{
+			client = this->clients[i];
+			break;
+		}
+	}
 
 	memset(buffer, 0, 1024);
 	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
-	// std::cout << "Buffer : " << buffer << std::endl;
+
 	if (BytesRead == 0)
+	{	
 		this->handleClientDisconnect(clientFd);
+	}
 	else if (BytesRead < 0)
 		throw std::runtime_error( "Error: Failed to receive data from socket using recv()");
 	
 	buffer[BytesRead] = '\0';
 	std::string		message(buffer);
-	std::string		line;
 	while ((pos = message.find("\r\n")) != std::string::npos)
 	{
 		line = message.substr(0, pos);
 		message.erase(0, pos + 2);
 		if (!line.empty())
 		{
-			std::cout << "Received from client " << clientFd << ": " << line << std::endl;
-			// add her commend parsing;
+			// std::cout << "input line : " << line << std::endl;
+			this->ParseCommand(client, line);
 		}
 	}
-	
 }
 
 void Server::handleClientDisconnect(int clientFd)
 {
-	for (size_t i = 0; i < this->clients.size(); i++)
-	{
-		if (this->clients[i]->Clientfd == clientFd)
-		{
-			delete this->clients[i];
-			this->clients.erase(this->clients.begin() + i);
-			break;
-		}
-	}
-
-	for (size_t i = 0; i < this->polling.size(); i++)
-	{
-		if (this->polling[i].fd == clientFd)
-		{
-			this->polling.erase(this->polling.begin() + i);
-			break;
-		}
-	}
-
-	close (clientFd);
-
+	this->removeClient(clientFd);
 	std::cout << "Client " << clientFd << " disconnected" << std::endl; // u can add this to client destructor
 }
-
 
 std::vector<std::string> Server::splitBySpaces(const std::string& middle)
 {
@@ -194,24 +177,24 @@ std::vector<std::string> Server::splitBySpaces(const std::string& middle)
     return (params);
 }
 
-
-
-void	Server::ParseCommand(int clientFd, std::string const & line)
+void	Server::ParseCommand(Client* client, std::string const & line)
 {
-	size_t						CmdPos = 0, ParamStart = 0;
-	size_t						start = 0, end = 0;
+	size_t						CmdPos = 0;
+	size_t						ParamStart = 0;
 	std::string					Command;
 	std::string					middle;
 	std::vector <std::string>	params;
-
+	
+	(void)client;
 	CmdPos = line.find(' ');
 	if (CmdPos == std::string::npos)
-		Command = line;
+	Command = line;
 	else
-		Command = line.substr(0, CmdPos);
+	Command = line.substr(0, CmdPos);
 	for (size_t i = 0; i < Command.length(); i++)
-		Command[i] = toupper(Command[i]);
-
+	Command[i] = toupper(Command[i]);
+	
+	// std::cout << "Command : -" << Command << "-" << std::endl; //****************** */
 	if (CmdPos != std::string::npos)
 	{
 		ParamStart = CmdPos + 1;
@@ -227,5 +210,106 @@ void	Server::ParseCommand(int clientFd, std::string const & line)
 			middle = line.substr(ParamStart);
 			params = this->splitBySpaces(middle);
 		}
+	}
+	if (Command == "PASS")
+		this->handlePass(client, params);
+	else if (Command == "NICK")
+		this->handleNick(client, params);
+	else if (Command == "USER")
+		this->handleUser(client, params);
+	else
+	{
+		if (!client->registered)
+		{
+			this->sendToClient(client, "[451]: You have not registered");
+			return ;
+		}
+	}
+}
+
+int Server::handlePass(Client* client, const std::vector<std::string>& params)
+{
+	if (params.empty())
+		return (this->removeClient(client->Clientfd), this->sendToClient(client, "[461] : Not enough parameters"), 1);
+	if (client->registered)
+		return (this->removeClient(client->Clientfd), this->sendToClient(client, "[462] : You may not reregister"), 1);
+	if (params[0] != this->Password)
+		return (this->removeClient(client->Clientfd), this->sendToClient(client, "[464] :Password incorrect"), 1);
+	return (client->password = params[0], 0);
+}
+
+int		Server::handleNick(Client* client, const std::vector<std::string>& params)
+{
+	bool valid = true;
+	std::string nickname = params[0];
+
+	if(params.empty())
+		return (this->removeClient(client->Clientfd), this->sendToClient(client, "[431]: No nickname given"), 1);
+	if (nickname.empty() || nickname.length() > 10)
+		valid = false;
+	for (size_t i = 0; i < nickname.length() && valid == true; i++)
+		if (!isalnum(nickname[i]) && nickname[i] != '-')
+			valid = false;
+	if (valid == false)
+		return (this->removeClient(client->Clientfd), this->sendToClient(client, "[432]: [" + nickname + "] Erroneous nickname"), 1);
+	for (size_t i = 0; i < this->clients.size(); i++)
+	{
+		if (this->clients[i] != client && this->clients[i]->nickName == nickname)
+			return (this->removeClient(client->Clientfd), this->sendToClient(client, "[433]: [" + nickname + "] Nickname is already in use") ,1);
+	}
+	return (client->nickName = nickname, 0);
+}
+
+int	Server::handleUser(Client* client, const std::vector<std::string>& params)
+{
+	if(params.size() < 4)
+		return (this->removeClient(client->Clientfd), this->sendToClient(client, "[461]: Not enough parameters"), 1);
+	if (client->registered)
+		return (this->removeClient(client->Clientfd), this->sendToClient(client, "[462]: You may not reregister"), 1);
+	client->userName = params[0];
+	client->hostName = params[1];
+	client->realName = params[2];
+	this->checkRegistration(client);
+	return (0);
+}
+
+void Server::sendToClient(Client* client, const std::string& message)
+{
+	std::string fullMessage = ": ircserv " + message + "\r\n";
+	send(client->Clientfd, fullMessage.c_str(), fullMessage.length(), 0);
+}
+
+void	Server::removeClient(int clientFd)
+{
+	for (size_t i = 0; i < this->clients.size(); i++)
+	{
+		if (this->clients[i]->Clientfd == clientFd)
+		{
+			delete this->clients[i];
+			this->clients.erase(this->clients.begin() + i);
+			break;
+		}
+	}
+	for (size_t i = 0; i < this->polling.size(); i++)
+	{
+		if (this->polling[i].fd == clientFd)
+		{
+			this->polling.erase(this->polling.begin() + i);
+			break;
+		}
+	}
+	close (clientFd);
+}
+
+void Server::checkRegistration(Client* client)
+{
+	if (!client->userName.empty() && !client->nickName.empty() && !client->password.empty()
+		&& client->password == this->Password && client->registered == false)
+	{
+		client->registered = true;
+		this->sendToClient(client, "####################################################");
+		this->sendToClient(client, "############ Welcome to our IRC Server #############");
+		this->sendToClient(client, "####################################################");
+		std::cout << "Client " << client->Clientfd << " is now registered as " << client->nickName << std::endl;
 	}
 }
