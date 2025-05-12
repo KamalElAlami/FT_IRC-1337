@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <cstring>
+#include <signal.h>
 #include <unistd.h>
 
 
@@ -20,6 +21,7 @@ class Server
 	private:
 		int							SerSockFd;
 		int							Port;
+		static bool						signals;
 		std::string						Password;
 		std::vector <Client*>			clients;
 		std::vector <struct pollfd>		polling;
@@ -51,9 +53,9 @@ class Server
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
+		// static void	SignalsHandler(int sig);
+		void	ClearAll();
 
-		/*---- this for tomorrow ----*/
-		
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);
 

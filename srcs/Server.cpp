@@ -1,7 +1,11 @@
 #include "../includes/Server.hpp"
 
+bool Server::signals = false;
+
 /*---------------------- Canonical orthodox form ----------------------*/
-Server::Server(int _fd, int _Port) : SerSockFd(_fd), Port(_Port) {}
+Server::Server(int _fd, int _Port) : SerSockFd(_fd), Port(_Port) {
+	this->signals = false;
+}
 Server::~Server() {}
 Server::Server(Server const & src)
 {
@@ -32,11 +36,20 @@ int	Server::get_Port() const {
 }
 
 /*---------------------- Server method's ----------------------*/
+
+// void	Server::SignalsHandler(int sig)
+// {
+// 	(void)sig;
+
+// 	Server::signals = true;
+// 	exit(0);
+// }
+
 void Server::Start_Server()
 {
 	try {
 		this->Build_Server();
-		while (true)
+		while (Server::signals == false)
 		{
 			if (poll(this->polling.data(), this->polling.size(), -1) == -1)
 			throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
@@ -53,8 +66,9 @@ void Server::Start_Server()
 			}
 		}
 	}
-	catch(const std::exception& e) {
-		// dont forget to close all FDs & delete all clients
+	catch(const std::exception& e)
+	{
+		this->ClearAll();
 		std::cerr << e.what() << std::endl;
 		exit (1);
 	}
@@ -87,9 +101,11 @@ void Server::Build_Server()
 	if (listen(this->SerSockFd, SOMAXCONN))
 		throw std::runtime_error( "Error: Failed to set socket to listening state using listen()");
 
-	std::cout << "Server Start on Port < " << this->Port 
+	std::cout << "IRC Server Start on Port < " << this->Port 
 	<< " >, Password < " << this->Password << " >" << std::endl;
 }
+
+
 
 void Server::handleNewConnection()
 {
@@ -109,8 +125,6 @@ void Server::handleNewConnection()
 	client_pollfd.events = POLLIN;
 	client_pollfd.revents = 0;
 	this->polling.push_back(client_pollfd);
-	std::cout << "New connection from Client < " << _client.Clientfd
-	<< " >, Address < "<< _client.address << " >" << std::endl;
 }
 
 void Server::handleClientMessage(int clientFd)
@@ -134,9 +148,7 @@ void Server::handleClientMessage(int clientFd)
 	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
 
 	if (BytesRead == 0)
-	{	
 		this->handleClientDisconnect(clientFd);
-	}
 	else if (BytesRead < 0)
 		throw std::runtime_error( "Error: Failed to receive data from socket using recv()");
 	
@@ -147,11 +159,31 @@ void Server::handleClientMessage(int clientFd)
 		line = message.substr(0, pos);
 		message.erase(0, pos + 2);
 		if (!line.empty())
-		{
-			// std::cout << "input line : " << line << std::endl;
 			this->ParseCommand(client, line);
+	}
+}
+
+void	Server::removeClient(int clientFd)
+{
+	for (size_t i = 0; i < this->clients.size(); i++)
+	{
+		if (this->clients[i]->Clientfd == clientFd)
+		{
+			delete this->clients[i];
+			this->clients[i] = NULL;
+			this->clients.erase(this->clients.begin() + i);
+			break;
 		}
 	}
+	for (size_t i = 0; i < this->polling.size(); i++)
+	{
+		if (this->polling[i].fd == clientFd)
+		{
+			this->polling.erase(this->polling.begin() + i);
+			break;
+		}
+	}
+	close (clientFd);
 }
 
 void Server::handleClientDisconnect(int clientFd)
@@ -193,8 +225,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	Command = line.substr(0, CmdPos);
 	for (size_t i = 0; i < Command.length(); i++)
 	Command[i] = toupper(Command[i]);
-	
-	// std::cout << "Command : -" << Command << "-" << std::endl; //****************** */
+
 	if (CmdPos != std::string::npos)
 	{
 		ParamStart = CmdPos + 1;
@@ -217,14 +248,14 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handleNick(client, params);
 	else if (Command == "USER")
 		this->handleUser(client, params);
-	else
-	{
-		if (!client->registered)
-		{
-			this->sendToClient(client, "[451]: You have not registered");
-			return ;
-		}
-	}
+	// else
+	// {
+	// 	if (!client->registered)
+	// 	{
+	// 		this->sendToClient(client, "[451]: You have not registered");
+	// 		return ;
+	// 	}
+	// }
 }
 
 int Server::handlePass(Client* client, const std::vector<std::string>& params)
@@ -275,30 +306,8 @@ int	Server::handleUser(Client* client, const std::vector<std::string>& params)
 
 void Server::sendToClient(Client* client, const std::string& message)
 {
-	std::string fullMessage = ": ircserv " + message + "\r\n";
+	std::string fullMessage = ": ircserv: " + message + "\r\n";
 	send(client->Clientfd, fullMessage.c_str(), fullMessage.length(), 0);
-}
-
-void	Server::removeClient(int clientFd)
-{
-	for (size_t i = 0; i < this->clients.size(); i++)
-	{
-		if (this->clients[i]->Clientfd == clientFd)
-		{
-			delete this->clients[i];
-			this->clients.erase(this->clients.begin() + i);
-			break;
-		}
-	}
-	for (size_t i = 0; i < this->polling.size(); i++)
-	{
-		if (this->polling[i].fd == clientFd)
-		{
-			this->polling.erase(this->polling.begin() + i);
-			break;
-		}
-	}
-	close (clientFd);
 }
 
 void Server::checkRegistration(Client* client)
@@ -307,9 +316,32 @@ void Server::checkRegistration(Client* client)
 		&& client->password == this->Password && client->registered == false)
 	{
 		client->registered = true;
-		this->sendToClient(client, "####################################################");
-		this->sendToClient(client, "############ Welcome to our IRC Server #############");
-		this->sendToClient(client, "####################################################");
+		this->sendToClient(client, "*************************************************************");
+		this->sendToClient(client, "***************** Welcome to our IRC Server *****************");
+		this->sendToClient(client, "*************************************************************");
+		this->sendToClient(client, "*                                                           *");
+		this->sendToClient(client, "*                                                           *");
+		this->sendToClient(client, "*                                                           *");
+		this->sendToClient(client, "*                                                           *");
+		this->sendToClient(client, "*                                                           *");
+		this->sendToClient(client, "*                                                           *");
+		this->sendToClient(client, "*                                                           *");
+		this->sendToClient(client, "*************************************************************");
+
 		std::cout << "Client " << client->Clientfd << " is now registered as " << client->nickName << std::endl;
 	}
+}
+
+
+void Server::ClearAll()
+{
+	for (int i = this->clients.size() - 1; i > -1; i--)
+	{
+		delete this->clients[i];
+		this->clients[i] = NULL;
+		this->clients.erase(this->clients.begin() + i);
+	}
+
+	for (size_t i = 0; i < this->polling.size(); i++)
+		close(this->polling[i].fd);
 }
