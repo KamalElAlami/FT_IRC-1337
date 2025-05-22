@@ -1,0 +1,16 @@
+Operators Definition:
+
+Channel operators (or "ops") huma users li 3ndhom privileges specials f channel
+They have administrative power to control the channel and moderate other users
+They are marked with "@" symbol before their nickname in user lists
+
+Privileges dial Operators:
+
+Moderation powers:
+
+KICK users from channel
+Set/change channel TOPIC (when mode +t is set)
+Change channel MODEs (settings)
+Set/remove operator status for other users
+INVITE users to invite-only channels
+BAN users from channel

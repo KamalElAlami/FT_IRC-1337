@@ -16,6 +16,14 @@ class Client
 		std::string	realName;
 		std::string	hostName;
 		Client();
+		Client(Client const & src)
+		{
+			*this = src;
+		};
+		std::string getNick() const
+		{
+			return this->nickName;
+		};
 		~Client(){};
 };
 

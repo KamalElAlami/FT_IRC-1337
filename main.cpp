@@ -1,5 +1,4 @@
 #include "./includes/Server.hpp"
-#include <string>
 
 int	 Pars_inputs(std::string Port, std::string Pass)
 {
@@ -27,8 +26,6 @@ int main (int ac, char **av)
 	if (Port_val < 6665 || Port_val > 6669)
 		return (std::cerr << "Error: Port out of range < from 6665 to 6665 >" << std::endl, 1);
 	Server server(-1, atoi(av[1]));
-	// signal(SIGINT, server.SignalsHandler);
-	// signal(SIGQUIT, server.SignalsHandler);
 	server.set_Password(av[2]);
 	server.Start_Server();	
 }
