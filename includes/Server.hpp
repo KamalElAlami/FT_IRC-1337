@@ -5,23 +5,23 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "Client.hpp"
-#include "Channels.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <string>
 #include <poll.h>
 #include <vector>
-
+#include <cerrno>
 #include <cstring>
 #include <signal.h>
 #include <unistd.h>
+#include "./Channels.hpp"
 
 
 class Server
 {
 	private:
-		int								SerSockFd;
-		int								Port;
+		int							SerSockFd;
+		int							Port;
 		static bool						signals;
 		std::string						Password;
 		std::vector <Client*>			clients;
@@ -54,17 +54,19 @@ class Server
 		int		handleUser(Client* client, const std::vector<std::string>& params);
 		int		handlePingPong(Client* client, const std::vector<std::string>& params);
 		int		handlePrivMsg(Client* client, const std::vector<std::string>& params);
-		int		handleTopic(Client* client, const std::vector<std::string>& params);
+		// int		handleTopic(Client* client, const std::vector<std::string>& params);
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
 		void	ClearAll();
-
+		int		handleCap(Client* client, const std::vector<std::string>& params);
 		/*---- Utiles method's ----*/
-		int isChannelExist(std::string chanName);
 		std::vector<std::string> splitBySpaces(const std::string& middle);
+		bool isChannelExist(std::string chanName);
 		void broadcastInChannel(std::vector <Client *> members, std::string message);
+		int findChannel(std::string name);
+		int findUser(std::string name);
 
 };
 

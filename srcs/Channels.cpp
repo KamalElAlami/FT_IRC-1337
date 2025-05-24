@@ -2,6 +2,10 @@
 #include "../includes/Channels.hpp"
 
 
+Channel::Channel(std::string n) : name(n)
+{
+}
+
 std::string& Channel::getName(void)
 {
     return (name);

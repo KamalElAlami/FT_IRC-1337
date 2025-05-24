@@ -15,6 +15,8 @@ class Client
 		std::string	password;
 		std::string	realName;
 		std::string	hostName;
+		bool capNegotiation;    // Track if CAP negotiation is in progress
+		bool capEnded;          // Track if client sent CAP END
 		Client();
 		Client(Client const & src)
 		{

@@ -14,9 +14,9 @@ int Server::handleJoin(Client* client, const std::vector<std::string>& params)
         this->chanPool.push_back(tmp);
         tmp->addToContainer(client, tmp->getOperators());
     }
-    int chanIndex = this->chanPool.size();
+    int chanIndex = this->chanPool.size() - 1;
     this->chanPool[chanIndex]->getMembers().push_back(client);
-    announce = client->nickName + " [" + client->userName + " @localhost]" + " has joined " + params[0];
+    announce = ":" + client->nickName + "!" + client->userName + "@localhost " + "JOIN " + params[0];
     this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
     return (0);
 }

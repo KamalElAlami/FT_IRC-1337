@@ -10,4 +10,6 @@ Client::Client()
     this->password = "";
     this->realName = "";
     this->userName = "";
+    this->capEnded = false;
+    this->capNegotiation = false;
 }
