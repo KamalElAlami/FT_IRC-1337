@@ -55,6 +55,7 @@ class Server
 		int		handlePingPong(Client* client, const std::vector<std::string>& params);
 		int		handlePrivMsg(Client* client, const std::vector<std::string>& params);
 		// int		handleTopic(Client* client, const std::vector<std::string>& params);
+		int		handlePart(Client* client, const std::vector<std::string>& params);
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
@@ -63,10 +64,10 @@ class Server
 		int		handleCap(Client* client, const std::vector<std::string>& params);
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);
-		bool isChannelExist(std::string chanName);
+		int isChannelExist(std::string chanName);
 		void broadcastInChannel(std::vector <Client *> members, std::string message);
-		int findChannel(std::string name);
-		int findUser(std::string name);
+		void sendMsgToChannel(Client* client, std::vector <Client *> members, std::string message);
+		int findUser(std::string name, std::vector <Client*> clients);
 
 };
 

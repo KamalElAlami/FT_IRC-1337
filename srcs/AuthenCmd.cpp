@@ -46,7 +46,10 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	else if (Command == "JOIN")
 		this->handleJoin(client, params);
 	else if (Command == "PRIVMSG")
-	this->handlePrivMsg(client, params);
+		this->handlePrivMsg(client, params);
+	else if (Command == "PART")
+		this->handlePart(client, params);
+	
 	// else if (Command == "TOPIC")
 	// 	this->handleTopic(client, params);
 
@@ -129,14 +132,14 @@ int Server::handlePrivMsg(Client* client, const std::vector<std::string>& params
 	message = ":" + client->nickName + "!" + client->userName + "@localhost PRIVMSG " + params[0] + " :" + params[1] + "\r\n";
 	if (params[0][0] == '#')
 	{
-		idx = this->findChannel(params[0]);
+		idx = this->isChannelExist(params[0]);
 		if (idx == -1)
-			return ( this->sendToClient(client, "401  :No such nick/channel"), 1);
-		this->broadcastInChannel(this->chanPool[idx]->getMembers(), message);
+			return (this->sendToClient(client, "401 " + params[0] + " :No such nick/channel"), 1);
+		this->sendMsgToChannel(client, this->chanPool[idx]->getMembers(), message);
 	}
 	else
 	{
-		idx = this->findUser(params[0]);
+		idx = this->findUser(params[0], clients);
 		if (idx == -1)
 			return ( this->sendToClient(client, "401  :No such nick/channel"), 1);
 		std::cout << message << std::endl;

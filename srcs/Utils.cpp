@@ -1,14 +1,14 @@
 #include "../includes/Server.hpp"
 #include "../includes/Channels.hpp"
 
-bool Server::isChannelExist(std::string chanName)
+int Server::isChannelExist(std::string chanName)
 {
-    // if (chanPool.empty())
-    //     return (false);
+    if (chanPool.empty())
+        return (-1);
     for (size_t i = 0; i < chanPool.size(); i++)
         if (chanName == chanPool[i]->getName())
-            return (true);
-    return (false);
+            return (i);
+    return (-1);
 }
 
 void Server::broadcastInChannel(std::vector <Client *> members, std::string message)
@@ -28,17 +28,23 @@ void Server::broadcastInChannel(std::vector <Client *> members, std::string mess
     }
 }
 
-int Server::findChannel(std::string name)
+
+void Server::sendMsgToChannel(Client* client, std::vector <Client *> members, std::string message)
 {
-    for (size_t i = 0; i < this->chanPool.size(); i++)
-        if (name == chanPool[i]->getName())
-            return(i);
-    return (-1);
+    if (message.length() < 2 || message.substr(message.length() - 2) != "\r\n")
+        message += "\r\n";
+    for (size_t i = 0; i < members.size(); i++)
+    {
+        if (client->Clientfd == members[i]->Clientfd)
+            continue;
+        send(members[i]->Clientfd, message.c_str(), message.length(), 0);
+    }
 }
-int Server::findUser(std::string name)
+
+int Server::findUser(std::string name, std::vector <Client*> cli)
 {
-    for (size_t i = 0; i < this->clients.size(); i++)
-        if (name == clients[i]->nickName)
+    for (size_t i = 0; i < cli.size(); i++)
+        if (name == cli[i]->nickName)
             return(i);
     return (-1);
 }

@@ -29,8 +29,8 @@ class Channel
         std::string& getTopic(void);
         std::vector <Client *>& getMembers(void);
         std::vector <Client *>& getOperators(void);
-        void addToContainer(Client* client, std::vector <Client *> Container);
-        int deleteFromContainer(Client* client, std::vector <Client *> Container);
+        void addToContainer(Client* client, std::vector <Client *>& Container);
+        int deleteFromContainer(Client* client, std::vector <Client *>& Container);
 
 };
 #endif

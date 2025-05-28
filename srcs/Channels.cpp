@@ -4,6 +4,7 @@
 
 Channel::Channel(std::string n) : name(n)
 {
+    
 }
 
 std::string& Channel::getName(void)
@@ -25,14 +26,14 @@ std::vector <Client *>& Channel::getOperators(void)
     return (ops);
 }
 
-void Channel::addToContainer(Client* client, std::vector <Client *> Container)
+void Channel::addToContainer(Client* client, std::vector <Client *>& Container)
 {
     Container.push_back(client); //  maybe needs protection
 }
 
-int Channel::deleteFromContainer(Client* client, std::vector <Client *> Container)
+int Channel::deleteFromContainer(Client* client, std::vector <Client *>& Container)
 {
-    for (size_t i = 0; i <= Container.size(); i++)
+    for (size_t i = 0; i < Container.size(); i++)
     {
         if (client->Clientfd == Container[i]->Clientfd)
         {
