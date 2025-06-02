@@ -48,3 +48,12 @@ int Server::findUser(std::string name, std::vector <Client*> cli)
             return(i);
     return (-1);
 }
+
+size_t numberOfParameterizedArgs(std::string arg)
+{
+    size_t count = 0;
+    for (int i = 0; arg.c_str()[i]; i++)
+        if ((arg.c_str()[i] == 'o') || (arg.c_str()[i] == 'k') || (arg.c_str()[i] == 'l'))
+            count += 1;
+    return (count);
+}

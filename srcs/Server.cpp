@@ -125,19 +125,6 @@ void Server::ClearAll()
 		close(this->polling[i].fd);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 int Server::handleCap(Client* client, const std::vector<std::string>& params)
 {
     if (params.empty())

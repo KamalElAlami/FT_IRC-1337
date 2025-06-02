@@ -20,6 +20,11 @@ class Channel
     private :
         std::string name;
         std::string topic;
+        bool        inviteOnly;
+        bool        restrictedTopic;
+        bool        enabledPass;
+        int         memberLimit;
+        std::string Password;
         std::vector <Client *> members;
         std::vector <Client *> ops;
         Channel();
@@ -29,6 +34,11 @@ class Channel
         std::string& getTopic(void);
         std::vector <Client *>& getMembers(void);
         std::vector <Client *>& getOperators(void);
+        bool& getInviteOnly(void);
+        bool& getRestrictedTopic(void);
+        bool& getEnabledPass(void);
+        int&  getMemberLimit(void);
+        std::string& getPassword(void);
         void addToContainer(Client* client, std::vector <Client *>& Container);
         int deleteFromContainer(Client* client, std::vector <Client *>& Container);
 

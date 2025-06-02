@@ -52,16 +52,18 @@ class Server
 		int		handlePass(Client* client, const std::vector<std::string>& params);
 		int		handleNick(Client* client, const std::vector<std::string>& params);
 		int		handleUser(Client* client, const std::vector<std::string>& params);
+		int		handleCap(Client* client, const std::vector<std::string>& params);
 		int		handlePingPong(Client* client, const std::vector<std::string>& params);
 		int		handlePrivMsg(Client* client, const std::vector<std::string>& params);
 		// int		handleTopic(Client* client, const std::vector<std::string>& params);
 		int		handlePart(Client* client, const std::vector<std::string>& params);
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
+		int		handleMode(Client* client, const std::vector<std::string>& params);
+		void	createChannel(Client* client, std::string channelName);
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
 		void	ClearAll();
-		int		handleCap(Client* client, const std::vector<std::string>& params);
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);
 		int isChannelExist(std::string chanName);
@@ -70,5 +72,7 @@ class Server
 		int findUser(std::string name, std::vector <Client*> clients);
 
 };
+
+size_t numberOfParameterizedArgs(std::string arg);
 
 #endif

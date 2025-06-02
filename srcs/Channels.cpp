@@ -4,7 +4,10 @@
 
 Channel::Channel(std::string n) : name(n)
 {
-    
+    inviteOnly = false;
+    restrictedTopic = false;
+    enabledPass = false;
+    memberLimit = -1;
 }
 
 std::string& Channel::getName(void)
@@ -24,6 +27,27 @@ std::vector <Client *>& Channel::getMembers(void)
 std::vector <Client *>& Channel::getOperators(void)
 {
     return (ops);
+}
+
+bool& Channel::getInviteOnly(void)
+{
+    return (inviteOnly);
+}
+bool& Channel::getRestrictedTopic(void)
+{
+    return (restrictedTopic);
+}
+bool& Channel::getEnabledPass(void)
+{
+    return (enabledPass);
+}
+int&  Channel::getMemberLimit(void)
+{
+    return (memberLimit);
+}
+std::string& Channel::getPassword(void)
+{
+    return (Password);
 }
 
 void Channel::addToContainer(Client* client, std::vector <Client *>& Container)

@@ -8,7 +8,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	std::string					middle;
 	std::vector <std::string>	params;
 	
-	(void)client;
+	// (void)client;
 	CmdPos = line.find(' ');
 	if (CmdPos == std::string::npos)
 		Command = line;
@@ -49,6 +49,8 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handlePrivMsg(client, params);
 	else if (Command == "PART")
 		this->handlePart(client, params);
+	else if (Command == "MODE")
+		this->handleMode(client, params);
 	
 	// else if (Command == "TOPIC")
 	// 	this->handleTopic(client, params);

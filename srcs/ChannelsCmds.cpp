@@ -1,25 +1,53 @@
 #include "../includes/Server.hpp"
 #include "../includes/Channels.hpp"
 
-int Server::handleJoin(Client* client, const std::vector<std::string>& params)
+static std::vector<std::string> ft_split(std::string str)
+{
+    size_t start = 0;
+    size_t end = 0;
+    std::vector<std::string> words;
+
+    while ((end = str.find(',', start)) != std::string::npos) {
+        words.push_back(str.substr(start, end - start));
+        start = end + 1;
+    }
+    words.push_back(str.substr(start));
+    return (words);
+}
+
+void    Server::createChannel(Client* client , std::string channelName)
 {
     std::string announce;
     int chanIndex;
-    if (params.empty())
-        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
-    if (params[0][0] != '#')
-        return (this->sendToClient(client, "403 :Forbidden channel name"), 1);
-    chanIndex = this->isChannelExist(params[0]);
+
+    chanIndex = this->isChannelExist(channelName);
     if (chanIndex == -1)
     {
-        Channel *tmp = new Channel(params[0]);
+        Channel *tmp = new Channel(channelName);
         this->chanPool.push_back(tmp);
         tmp->addToContainer(client, tmp->getOperators());
         chanIndex = this->chanPool.size() - 1;
     }
     this->chanPool[chanIndex]->getMembers().push_back(client);
-    announce = ":" + client->nickName + "!" + client->userName + "@localhost " + "JOIN " + params[0];
+    announce = ":" + client->nickName + "!" + client->userName + "@localhost " + "JOIN " + channelName;
     this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
+}
+
+int Server::handleJoin(Client* client, const std::vector<std::string>& params)
+{
+
+    if (params.empty())
+        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
+    if (params[0][0] != '#')
+        return (this->sendToClient(client, "403 :Forbidden channel name"), 1);
+    if (params[0].find(","))
+    {
+        std::vector<std::string> canals = ft_split(params[0]);
+        for (size_t i = 0; i < canals.size(); i++)
+            createChannel(client, canals[i]);
+    }
+    else
+        createChannel(client, params[0]);
     return (0);
 }
 
@@ -53,3 +81,25 @@ int Server::handlePart(Client* client, const std::vector<std::string>& params)
     
     return (0);
 }
+
+int		Server::handleMode(Client* client, const std::vector<std::string>& params)
+{
+    if (params.empty())
+        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
+    if (numberOfParameterizedArgs(params[1]) > (params.size() - 2))
+        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
+    int chanIndex = this->isChannelExist(params[0]);
+    if (chanIndex == -1)
+        return (this->sendToClient(client, "403 :No such channel"), 1);
+    if (this->findUser(client->nickName, chanPool[chanIndex]->getOperators()) == -1)
+        return (this->sendToClient(client, "482 " + params[0] + " :You're not channel operator"), 1);
+    // if (params[1].size() > 2)
+        // hundleJoinededArgs();
+    // hundleShuffledArgs();
+
+    return (0);
+}
+
+
+/// mode #channel +iok kamal lsdkjdf
+/// mode #cjan +i 
