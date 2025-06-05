@@ -4,6 +4,8 @@
 
 Channel::Channel(std::string n) : name(n)
 {
+    topic = "";
+    isTopicProtected = false;
     inviteOnly = false;
     restrictedTopic = false;
     enabledPass = false;
@@ -67,4 +69,44 @@ int Channel::deleteFromContainer(Client* client, std::vector <Client *>& Contain
 
     }
     return (0);
+}
+
+bool Channel::hasUser(int _client_fd){
+    for (size_t i = 0; i < members.size(); i++){
+        if (_client_fd == members[i]->getClientFd())
+            return true;
+    }
+    return false;
+}
+
+std::string Channel::getTopicSetBy()const{
+    return this->topicSetBy;
+}
+
+time_t Channel::getTopicSetAt() const{
+    return this->topicSetAt;
+}
+
+bool Channel::getIsTopicProtected()const{
+    return this->isTopicProtected;
+}
+
+bool Channel::isOperator(int client_fd)const {
+    for (size_t i = 0; i < ops.size(); i++){
+        if (client_fd == ops[i]->getClientFd())
+            return true;
+    }
+    return false;
+}
+
+void Channel::setTopic(std::string _topic){
+    this->topic = _topic;
+}
+
+void Channel::setTopicSetBy(std::string _client){
+    this->topicSetBy = _client;
+}
+
+void Channel::setTopicSetAt(time_t _time){
+    this->topicSetAt = _time;
 }

@@ -51,9 +51,10 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handlePart(client, params);
 	else if (Command == "MODE")
 		this->handleMode(client, params);
-	
-	// else if (Command == "TOPIC")
-	// 	this->handleTopic(client, params);
+	else if (Command == "TOPIC")//redirect to this scoop probleme
+		this->handleTopic(client, params);
+	else if (Command == "INVITE")// empty commande doesn't enter here
+		this->handleInvite(client,params);
 
 }
 

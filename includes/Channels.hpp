@@ -10,7 +10,7 @@
 #include <string>
 #include <poll.h>
 #include <vector>
-
+#include <time.h>
 #include <cstring>
 #include <signal.h>
 #include <unistd.h>
@@ -20,6 +20,9 @@ class Channel
     private :
         std::string name;
         std::string topic;
+        std::string topicSetBy;
+        time_t      topicSetAt;
+        bool        isTopicProtected;
         bool        inviteOnly;
         bool        restrictedTopic;
         bool        enabledPass;
@@ -34,6 +37,16 @@ class Channel
         std::string& getTopic(void);
         std::vector <Client *>& getMembers(void);
         std::vector <Client *>& getOperators(void);
+        //added by soufiix
+        bool hasUser(int client_fd);
+        std::string getTopicSetBy()const;
+        time_t getTopicSetAt() const;
+        bool getIsTopicProtected()const;
+        bool isOperator(int client_fd)const ;
+        void setTopic(std::string _topic);
+        void setTopicSetBy(std::string _client);
+        void setTopicSetAt(time_t _time);
+        // -------------------------
         bool& getInviteOnly(void);
         bool& getRestrictedTopic(void);
         bool& getEnabledPass(void);

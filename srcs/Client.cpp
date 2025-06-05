@@ -13,3 +13,11 @@ Client::Client()
     this->capEnded = false;
     this->capNegotiation = false;
 }
+
+int Client::getClientFd(){
+    return Clientfd;
+}
+
+std::string Client::getPrefix() const {
+    return nickName + "!" + userName + "@localhost";
+}

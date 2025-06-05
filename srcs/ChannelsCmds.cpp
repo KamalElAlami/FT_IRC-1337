@@ -1,13 +1,13 @@
 #include "../includes/Server.hpp"
 #include "../includes/Channels.hpp"
 
-static std::vector<std::string> ft_split(std::string str)
+static std::vector<std::string> ft_split(std::string str, char c)
 {
     size_t start = 0;
     size_t end = 0;
     std::vector<std::string> words;
 
-    while ((end = str.find(',', start)) != std::string::npos) {
+    while ((end = str.find(c, start)) != std::string::npos) {
         words.push_back(str.substr(start, end - start));
         start = end + 1;
     }
@@ -42,7 +42,7 @@ int Server::handleJoin(Client* client, const std::vector<std::string>& params)
         return (this->sendToClient(client, "403 :Forbidden channel name"), 1);
     if (params[0].find(","))
     {
-        std::vector<std::string> canals = ft_split(params[0]);
+        std::vector<std::string> canals = ft_split(params[0], ',');
         for (size_t i = 0; i < canals.size(); i++)
             createChannel(client, canals[i]);
     }
@@ -103,3 +103,76 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
 
 /// mode #channel +iok kamal lsdkjdf
 /// mode #cjan +i 
+
+std::vector <std::string> handelparams(std::string param){
+    std::vector<std::string> store = ft_split(param, ' ');
+    std::vector<std::string> new_params;
+    new_params.push_back(store[0]);
+    if (store.size() > 1) {
+        std::string rest;
+        for (size_t i = 1; i < store.size(); ++i) 
+            rest += store[i] + " ";
+        rest = rest.substr(0, rest.size() - 1);
+        new_params.push_back(rest);
+    }
+    return new_params;
+}
+
+int		Server::handleTopic(Client* client, const std::vector<std::string>& params){
+    if (params.empty())
+        return (sendToClient(client, "461: Not enough parameters"), 1);
+    std::cout << "i am here\n";
+    std::vector<std::string> new_params = handelparams(params[1]);
+    std::string channelName = new_params[0];
+    Channel *_channel = findChannel(channelName);
+    if (!_channel || !_channel->hasUser(client->getClientFd())){
+        return (sendToClient(client, "442" + channelName + " :You're not on that channel"), 1);
+    }
+    if (new_params.size() == 1 && _channel){
+        if (_channel->getTopic().empty())
+        return (sendToClient(client, "331" + channelName + " :No topic is set"), 1);
+        else{
+            sendToClient(client, "332" + channelName + " :" + _channel->getTopic());
+            sendToClient(client, "333" + channelName + " " + _channel->getTopicSetBy() + " " + std::to_string(_channel->getTopicSetAt()));
+        }
+    }
+    if (new_params.size() > 1){
+        if (_channel->getIsTopicProtected() && _channel->isOperator(client->getClientFd()))
+            return (sendToClient(client, "482" + channelName + " :You're not channel operator"), 1);
+            _channel->setTopic(new_params[1]);
+            _channel->setTopicSetBy(client->nickName);
+            _channel->setTopicSetAt(std::time(0));
+    }
+    std::cout << "here" << _channel->getTopic() << std::endl;
+    std::string message = ":" + client->getPrefix() + " TOPIC " + channelName + ":" + new_params[1];
+    this->broadcastInChannel(_channel->getMembers(), message);
+    return 0;
+}
+
+
+void sendError(Client& client, const std::string& errorCode, const std::string& message) {
+    std::string errorMsg = ":ircsev ERROR " + errorCode + " " + client.nickName + " :" + message;
+    client.sendMessage(errorMsg);
+}
+
+int		Server::handleInvite(Client *client, const std::vector<std::string> &params){
+    (void)client;
+     if (params.empty() || params.size() != 2){//usless
+        std::cout << "commande empty\n";
+         return (sendError(*client, "461", "INVITE :Not enough parameters"), 1);
+    }
+    for (size_t i = 0; i < params.size(); i++)// check input = i didn't understand this input
+        std::cout << params[i] << std::endl;
+    std::string channelName = params[1];
+    std::cout << "channel name is: " + channelName << std::endl;
+    Channel *_channel = findChannel(channelName);
+    if (_channel == NULL){
+        std::cout << "here now 1\n";
+        return (sendError(*client, "403", "No such channel"), 1);
+    }
+    if (_channel->hasUser(client->getClientFd())){
+        std::cout << "here now 2\n";
+        return (sendError(*client, "442", "You're not on that channel"), 1);
+    }
+    return 0;
+}
