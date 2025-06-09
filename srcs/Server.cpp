@@ -177,7 +177,7 @@ int Server::handleCap(Client* client, const std::vector<std::string>& params)
 
 // added by soufiix
 
-Channel *Server::findChannel(const std::string &channelName){
+Channel *Server::findChannel(const std::string &channelName)const {
 	for (size_t i = 0; i < chanPool.size(); i++){
 		std::cout << "the given: \'"<< channelName << "\' in the server \'" << chanPool[i]->getName() << "\'" << std::endl;
 		if (channelName == chanPool[i]->getName()){
@@ -187,4 +187,25 @@ Channel *Server::findChannel(const std::string &channelName){
 	}
 	std::cout << "failure to find channel\n";
 	return NULL;
+}
+
+int Server::getclientfd(std::string clienName)const {
+	for (size_t i = 0; i < clients.size(); i++){
+		if (clienName == clients[i]->getNick())
+			return clients[i]->Clientfd;
+	}
+	return -1;
+}
+
+Client *Server::getClient(int clientFd)const {
+	for (size_t i = 0; i < clients.size(); i++){
+		if (clientFd == clients[i]->getClientFd())
+			return clients[i];
+	}
+	return NULL;
+}
+
+void Server::sendError(Client& client, const std::string& errorCode, const std::string& message) {
+    std::string errorMsg = ":ircsev ERROR " + errorCode + " " + client.nickName + " :" + message;
+    client.sendMessage(errorMsg);
 }

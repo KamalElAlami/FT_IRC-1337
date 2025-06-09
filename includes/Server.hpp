@@ -55,8 +55,6 @@ class Server
 		int		handleCap(Client* client, const std::vector<std::string>& params);
 		int		handlePingPong(Client* client, const std::vector<std::string>& params);
 		int		handlePrivMsg(Client* client, const std::vector<std::string>& params);
-		int		handleTopic(Client* client, const std::vector<std::string>& params);
-		int		handleInvite(Client *client, const std::vector<std::string> &params);
 		int		handlePart(Client* client, const std::vector<std::string>& params);
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
 		int		handleMode(Client* client, const std::vector<std::string>& params);
@@ -71,9 +69,15 @@ class Server
 		void broadcastInChannel(std::vector <Client *> members, std::string message);
 		void sendMsgToChannel(Client* client, std::vector <Client *> members, std::string message);
 		int findUser(std::string name, std::vector <Client*> clients);
-
+		
 		//added by soufiix
-		Channel *findChannel(const std::string &channelName);
+		Channel *findChannel(const std::string &channelName)const;
+		int 	getclientfd(std::string clienName)const;
+		Client *getClient(int clientFd)const;
+		int		handleTopic(Client* client, const std::vector<std::string>& params);
+		int		handleInvite(Client *client, const std::vector<std::string> &params);
+		int 	handleKick(Client* client, const std::vector<std::string>& params);
+		void 	sendError(Client& client, const std::string& errorCode, const std::string& message);
 
 };
 

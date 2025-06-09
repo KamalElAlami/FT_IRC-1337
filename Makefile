@@ -1,8 +1,9 @@
 CPP			=	c++
 NAME		=	ircserv
 SRC			=	main.cpp srcs/Server.cpp srcs/Client.cpp srcs/AuthenCmd.cpp \
-				srcs/handleConnections.cpp srcs/Channels.cpp srcs/ChannelsCmds.cpp  srcs/Utils.cpp 
-FLAGS		=	-Wall -Wextra -Werror -std=c++98 #-g -fsanitize=address
+				srcs/handleConnections.cpp srcs/Channels.cpp srcs/ChannelsCmds.cpp  srcs/Utils.cpp \
+				commandes/invite.cpp commandes/kick.cpp commandes/topic.cpp
+FLAGS		=	-Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
 OBJ			=	$(SRC:.cpp=.o)
 
 all			:	$(NAME)

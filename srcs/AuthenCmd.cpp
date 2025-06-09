@@ -55,6 +55,8 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handleTopic(client, params);
 	else if (Command == "INVITE")// empty commande doesn't enter here
 		this->handleInvite(client,params);
+	else if (Command == "KICK")
+		this->handleKick(client, params);
 
 }
 
