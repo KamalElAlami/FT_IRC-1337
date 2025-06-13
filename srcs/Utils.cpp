@@ -15,15 +15,15 @@ void Server::broadcastInChannel(std::vector <Client *> members, std::string mess
 {
     if (message.length() < 2 || message.substr(message.length() - 2) != "\r\n")
         message += "\r\n";
-    std::cout << message << std::endl;
-    for (size_t i = 0; i < members.size(); i++)
-        {
-            std::cout << members[i]->Clientfd << " ";
-        }
-        std::cout << std::endl;
+//    std::cout << message << std::endl;
+//    for (size_t i = 0; i < members.size(); i++)
+//        {
+//            std::cout << members[i]->Clientfd << " ";
+//        }
+     //   std::cout << std::endl;
     for (size_t i = 0; i < members.size(); i++)
     {
-        std::cout << "client fd : " << members[i]->Clientfd << std::endl;
+     //   std::cout << "client fd : " << members[i]->Clientfd << std::endl;
         send(members[i]->Clientfd, message.c_str(), message.length(), 0);
     }
 }

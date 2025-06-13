@@ -133,7 +133,7 @@ int Server::handleCap(Client* client, const std::vector<std::string>& params)
     std::string subCommand = params[0];
     std::string nick = client->nickName.empty() ? "*" : client->nickName;
     
-    std::cout << "CAP command: " << subCommand << std::endl;
+//    std::cout << "CAP command: " << subCommand << std::endl;
     
     if (subCommand == "LS") {
         // Client is asking what capabilities we support
@@ -144,7 +144,7 @@ int Server::handleCap(Client* client, const std::vector<std::string>& params)
         std::string msg = ":ircserv CAP " + nick + " LS :\r\n";
         send(client->Clientfd, msg.c_str(), msg.length(), 0);
         
-        std::cout << "Sent CAP LS response to " << nick << std::endl;
+     //   std::cout << "Sent CAP LS response to " << nick << std::endl;
         
     } else if (subCommand == "LIST") {
         // Client is asking what capabilities are currently enabled
@@ -159,14 +159,14 @@ int Server::handleCap(Client* client, const std::vector<std::string>& params)
         std::string msg = ":ircserv CAP " + nick + " NAK :" + capabilities + "\r\n";
         send(client->Clientfd, msg.c_str(), msg.length(), 0);
         
-        std::cout << "Rejected CAP REQ: " << capabilities << std::endl;
+     //   std::cout << "Rejected CAP REQ: " << capabilities << std::endl;
         
     } else if (subCommand == "END") {
         // Client is ending capability negotiation
         client->capNegotiation = false;
         client->capEnded = true;
         
-        std::cout << "CAP negotiation ended for " << nick << std::endl;
+     //   std::cout << "CAP negotiation ended for " << nick << std::endl;
         
         // Now we can proceed with registration if all required info is available
         this->checkRegistration(client);

@@ -33,6 +33,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
+	//std::cout << "Commend : " << Command << ", params : " << params[0] << std::endl;
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -49,8 +50,8 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handlePrivMsg(client, params);
 	else if (Command == "PART")
 		this->handlePart(client, params);
-	else if (Command == "MODE")
-		this->handleMode(client, params);
+	//else if (Command == "MODE")
+	//	this->handleMode(client, params);
 	
 	// else if (Command == "TOPIC")
 	// 	this->handleTopic(client, params);
@@ -75,20 +76,29 @@ int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 {
 	bool valid = true;
 	std::string nickname = params[0];
+	std::string announce;
+	std::cout << "Nickname : " << nickname << std::endl; 
 
 	if(params.empty())
-		return (this->removeClient(client->Clientfd), 
-		this->sendToClient(client, "431 :No nickname given"), 1);
-	if (nickname.empty() || nickname.length() > 10)
+		return (this->removeClient(client->Clientfd),1);
+	if (nickname.empty())
 		valid = false;
-	for (size_t i = 0; i < nickname.length() && valid == true; i++)
-		if (!isalnum(nickname[i]) && nickname[i] != '-')
+	for (size_t i = 0; i < nickname.length() && valid == true; i++) {
+		if (!isprint(nickname[i]))
 			valid = false;
+	}
 	if (valid == false)
-		return (this->removeClient(client->Clientfd), 
-		this->sendToClient(client, "432 :[" + nickname + "] Erroneous nickname"), 1);
+		return (this->sendToClient(client, "432 :[" + nickname + "] Erroneous nickname"), this->removeClient(client->Clientfd), 1);
 	for (size_t i = 0; i < this->clients.size(); i++)
 	{
+		if (this->clients[i] == client && this->clients[i]->nickName != nickname)
+		{
+			announce = ":" + client->nickName + "!" + client->userName + "@localhost " + "NICK " + nickname;
+			this->sendToClient(client, announce);
+			this->clients[i]->nickName = nickname;
+			std::cout << "We ara here!" << std::endl;
+			return (0);
+		}
 		if (this->clients[i] != client && this->clients[i]->nickName == nickname)
 			return (this->removeClient(client->Clientfd), 
 			this->sendToClient(client,
@@ -100,11 +110,9 @@ int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 int	Server::handleUser(Client* client, const std::vector<std::string>& params)
 {
 	if(params.size() < 4)
-		return (this->removeClient(client->Clientfd), 
-		this->sendToClient(client, "461 :Not enough parameters"), 1);
+		return (this->sendToClient(client, "461 :Not enough parameters"), this->removeClient(client->Clientfd), 1);
 	if (client->registered)
-		return (this->removeClient(client->Clientfd), 
-		this->sendToClient(client, "462 :You may not reregister"), 1);
+		return (this->sendToClient(client, "462 :You may not reregister"), this->removeClient(client->Clientfd), 1);
 	client->userName = params[0];
 	client->hostName = params[1];
 	client->realName = params[2];
@@ -144,7 +152,7 @@ int Server::handlePrivMsg(Client* client, const std::vector<std::string>& params
 		idx = this->findUser(params[0], clients);
 		if (idx == -1)
 			return ( this->sendToClient(client, "401  :No such nick/channel"), 1);
-		std::cout << message << std::endl;
+		//std::cout << message << std::endl;
 		send(clients[idx]->Clientfd, message.c_str(), message.length(), 0);
 	}
 	return 0;
@@ -152,7 +160,7 @@ int Server::handlePrivMsg(Client* client, const std::vector<std::string>& params
 
 void Server::sendToClient(Client* client, const std::string& message)
 {
-	std::string fullMessage = ":ircserv " + message + "\r\n";
+	std::string fullMessage = message + "\r\n";
 	send(client->Clientfd, fullMessage.c_str(), fullMessage.length(), 0);
 }
 
@@ -174,6 +182,6 @@ void Server::checkRegistration(Client* client)
 		this->sendToClient(client, "004 " + client->nickName + 
 			" :ircserv 1.0 o o");
 			this->sendToClient(client, "****************************************************");
-		std::cout << "Client " << client->Clientfd << " is now registered as " << client->nickName << std::endl;
+		//std::cout << "Client " << client->Clientfd << " is now registered as " << client->nickName << std::endl;
 	}
 }
