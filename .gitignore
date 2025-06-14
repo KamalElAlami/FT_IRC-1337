@@ -1,0 +1,23 @@
+# Object files
+*.o
+test.cpp
+errors.txt
+ircserv
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Additional common files to ignore
+*.tmp
+*.temp
+*~
