@@ -29,7 +29,7 @@ void    Server::createChannel(Client* client , std::string channelName)
         chanIndex = this->chanPool.size() - 1;
     }
     this->chanPool[chanIndex]->getMembers().push_back(client);
-    announce = ":" + client->nickName + "!" + client->userName + "@localhost " + "JOIN " + channelName;
+    announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
 }
 
@@ -51,36 +51,36 @@ int Server::handleJoin(Client* client, const std::vector<std::string>& params)
     return (0);
 }
 
-int Server::handlePart(Client* client, const std::vector<std::string>& params)
-{
-    if (params.empty())
-        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
-    int chanIndex = this->isChannelExist(params[0]);
-    if (chanIndex == -1)
-        return (this->sendToClient(client, "403 :No such channel"), 1);
-    int userIndex = this->findUser(client->nickName, this->chanPool[chanIndex]->getMembers());
-    if (userIndex == -1)
-        return (this->sendToClient(client, "442 :You're not on that channel"), 1);
-    std::string reason = (params.size() > 1) ? params[1] : "See Later Guys";
-    std::string message = ":" + client->nickName + "!" + client->userName + "@localhost PART " + params[0] + " :" + reason + "\r\n";
-    this->sendMsgToChannel(client, this->chanPool[chanIndex]->getMembers(), message);
-    this->chanPool[chanIndex]->deleteFromContainer(this->chanPool[chanIndex]->getMembers()[userIndex], this->chanPool[chanIndex]->getMembers());
-    int opIndex = this->findUser(client->nickName, this->chanPool[chanIndex]->getOperators());
-    if (this->chanPool[chanIndex]->getOperators().size() == 1 && opIndex != -1)
-    {
-        if (this->chanPool[chanIndex]->getMembers().size() > 1)
-            this->chanPool[chanIndex]->addToContainer(this->chanPool[chanIndex]->getMembers()[0], this->chanPool[chanIndex]->getOperators());
-        else
-        {
-            delete this->chanPool[chanIndex];
-            this->chanPool.erase(this->chanPool.begin() + chanIndex);
-        }
-    }
-    else if (opIndex != -1)
-        this->chanPool[chanIndex]->deleteFromContainer(this->chanPool[chanIndex]->getOperators()[opIndex], this->chanPool[chanIndex]->getOperators());
+//int Server::handlePart(Client* client, const std::vector<std::string>& params)
+//{
+//    if (params.empty())
+//        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
+//    int chanIndex = this->isChannelExist(params[0]);
+//    if (chanIndex == -1)
+//        return (this->sendToClient(client, "403 :No such channel"), 1);
+//    int userIndex = this->findUser(client->getNickName(), this->chanPool[chanIndex]->getMembers());
+//    if (userIndex == -1)
+//        return (this->sendToClient(client, "442 :You're not on that channel"), 1);
+//    std::string reason = (params.size() > 1) ? params[1] : "See Later Guys";
+//    std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost PART " + params[0] + " :" + reason + "\r\n";
+//    this->sendMsgToChannel(client, this->chanPool[chanIndex]->getMembers(), message);
+//    this->chanPool[chanIndex]->deleteFromContainer(this->chanPool[chanIndex]->getMembers()[userIndex], this->chanPool[chanIndex]->getMembers());
+//    int opIndex = this->findUser(client->getNickName(), this->chanPool[chanIndex]->getOperators());
+//    if (this->chanPool[chanIndex]->getOperators().size() == 1 && opIndex != -1)
+//    {
+//        if (this->chanPool[chanIndex]->getMembers().size() > 1)
+//            this->chanPool[chanIndex]->addToContainer(this->chanPool[chanIndex]->getMembers()[0], this->chanPool[chanIndex]->getOperators());
+//        else
+//        {
+//            delete this->chanPool[chanIndex];
+//            this->chanPool.erase(this->chanPool.begin() + chanIndex);
+//        }
+//    }
+//    else if (opIndex != -1)
+//        this->chanPool[chanIndex]->deleteFromContainer(this->chanPool[chanIndex]->getOperators()[opIndex], this->chanPool[chanIndex]->getOperators());
     
-    return (0);
-}
+//    return (0);
+//}
 
 int		Server::handleMode(Client* client, const std::vector<std::string>& params)
 {
@@ -91,7 +91,7 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
     int chanIndex = this->isChannelExist(params[0]);
     if (chanIndex == -1)
         return (this->sendToClient(client, "403 :No such channel"), 1);
-    if (this->findUser(client->nickName, chanPool[chanIndex]->getOperators()) == -1)
+    if (this->findUser(client->getNickName(), chanPool[chanIndex]->getOperators()) == -1)
         return (this->sendToClient(client, "482 " + params[0] + " :You're not channel operator"), 1);
     // if (params[1].size() > 2)
         // hundleJoinededArgs();
@@ -102,16 +102,14 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
 
 void Server::createBot(void)
 {
-    Client* bot = new Client();
-    bot->nickName = "Sbiksla";
-    bot->userName = "Sbiksla";
-    bot->realName = "Sbiksla";
-    bot->registered = true;
-    bot->capNegotiation = false;
-    bot->capEnded = true;
-    bot->Clientfd = -1;
-    bot->address = "localhost";
-    this->clients.push_back(bot);
+	Client* bot = new Client();
+	bot->setNickName("Sbiksla");
+	bot->setUserName("Sbiksla");
+	bot->setRealName("Sbiksla");
+	bot->setRegistered(true);
+	bot->setClientfd(-1);
+	bot->setAddress("localhost");
+	this->clients.push_back(bot);
 }
 
 int		Server::handleSbiksla(Client* client, const std::vector<std::string>& params)
@@ -123,7 +121,7 @@ int		Server::handleSbiksla(Client* client, const std::vector<std::string>& param
     if (params.empty())
         return (this->sendToClient(client, "461 :Not enough parameters"), 1);
     createBot();
-    message = ":" + client->nickName + "!" + client->userName + "@localhost PRIVMSG " + params[0] + " :" + params[1] + "\r\n";
+    message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost PRIVMSG " + params[0] + " :" + params[1] + "\r\n";
     a.setApi("AIzaSyCCXUW015gm08ac2YuWxu-SXjCC980u1t4");
     if (params[0][0] == '#')
 	{
@@ -138,7 +136,7 @@ int		Server::handleSbiksla(Client* client, const std::vector<std::string>& param
 		if (idx == -1)
 			return ( this->sendToClient(client, "401  :No such nick/channel"), 1);
 		//std::cout << message << std::endl;
-		send(clients[idx]->Clientfd, message.c_str(), message.length(), 0);
+		send(clients[idx]->getClientfd(), message.c_str(), message.length(), 0);
 	}
     return (0);
 }

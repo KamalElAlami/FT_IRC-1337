@@ -7,14 +7,14 @@ void Server::handleNewConnection()
 	struct sockaddr_in addr = {};
 	socklen_t addr_len = sizeof(addr);
 
-	_client.Clientfd = accept(this->SerSockFd, (struct sockaddr *)&addr, &addr_len);
-	if (_client.Clientfd == -1)
+	_client.setClientfd(accept(this->SerSockFd, (struct sockaddr *)&addr, &addr_len));
+	if (_client.getClientfd() == -1)
 		throw std::runtime_error( "Error: Failed to accept new connection using accept()");
 
-	_client.address = inet_ntoa(addr.sin_addr);
+	_client.setAddress(inet_ntoa(addr.sin_addr));
 	Client *tmp = new Client(_client);
 	this->clients.push_back(tmp);
-	client_pollfd.fd = _client.Clientfd;
+	client_pollfd.fd = _client.getClientfd();
 	client_pollfd.events = POLLIN;
 	client_pollfd.revents = 0;
 	this->polling.push_back(client_pollfd);
@@ -30,7 +30,7 @@ void Server::handleClientMessage(int clientFd)
 
 	for (size_t i = 0; i < this->clients.size(); i++)
 	{
-		if (this->clients[i]->Clientfd == clientFd)
+		if (this->clients[i]->getClientfd() == clientFd)
 		{
 			client = this->clients[i];
 			break;
@@ -60,7 +60,7 @@ void	Server::removeClient(int clientFd)
 {
 	for (size_t i = 0; i < this->clients.size(); i++)
 	{
-		if (this->clients[i]->Clientfd == clientFd)
+		if (this->clients[i]->getClientfd() == clientFd)
 		{
 			delete this->clients[i];
 			this->clients[i] = NULL;

@@ -32,7 +32,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
-	std::cout << "Commend : " << Command << ", params : " << params[0] << std::endl;
+	//std::cout << "Commend : " << Command << ", params : " << params[0] << std::endl;
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -51,139 +51,34 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handlePart(client, params);
 	// else if (Command == "SBIKSLA")
 	// 	this->handleSbiksla(client, params);
-
 	//else if (Command == "MODE")
-	//	this->handleMode(client, params);
-	
+	//	this->handleMode(client, params);	
 	// else if (Command == "TOPIC")
 	// 	this->handleTopic(client, params);
 
 }
 
-int Server::handlePass(Client* client, const std::vector<std::string>& params)
-{
-	if (params.empty())
-		return (this->removeClient(client->Clientfd), 
-		this->sendToClient(client, "461 :Not enough parameters"), 1);
-	if (client->registered)
-		return (this->removeClient(client->Clientfd), 
-		this->sendToClient(client, "462 :You may not reregister"), 1);
-	if (params[0] != this->Password)
-		return (this->removeClient(client->Clientfd), 
-		this->sendToClient(client, "464 :Password incorrect"), 1);
-	return (client->password = params[0], 0);
-}
-
-int		Server::handleNick(Client* client, const std::vector<std::string>& params)
-{
-	bool valid = true;
-	std::string nickname = params[0];
-	std::string announce;
-	std::cout << "Nickname : " << nickname << std::endl; 
-
-	if(params.empty())
-		return (this->removeClient(client->Clientfd),1);
-	if (nickname.empty())
-		valid = false;
-	for (size_t i = 0; i < nickname.length() && valid == true; i++) {
-		if (!isprint(nickname[i]))
-			valid = false;
-	}
-	if (valid == false)
-		return (this->sendToClient(client, "432 :[" + nickname + "] Erroneous nickname"), this->removeClient(client->Clientfd), 1);
-	for (size_t i = 0; i < this->clients.size(); i++)
-	{
-		if (this->clients[i] == client && this->clients[i]->nickName != nickname)
-		{
-			announce = ":" + client->nickName + "!" + client->userName + "@localhost " + "NICK " + nickname;
-			this->sendToClient(client, announce);
-			this->clients[i]->nickName = nickname;
-			std::cout << "We ara here!" << std::endl;
-			return (0);
-		}
-		if (this->clients[i] != client && this->clients[i]->nickName == nickname)
-			return (this->removeClient(client->Clientfd), 
-			this->sendToClient(client,
-			"433 :[" + nickname + "] Nickname is already in use") ,1);
-	}
-	return (client->nickName = nickname, 0);
-}
-
-int	Server::handleUser(Client* client, const std::vector<std::string>& params)
-{
-	if(params.size() < 4)
-		return (this->sendToClient(client, "461 :Not enough parameters"), this->removeClient(client->Clientfd), 1);
-	if (client->registered)
-		return (this->sendToClient(client, "462 :You may not reregister"), this->removeClient(client->Clientfd), 1);
-	client->userName = params[0];
-	client->hostName = params[1];
-	client->realName = params[2];
-	this->checkRegistration(client);
-	return (0);
-}
-
-int	Server::handlePingPong(Client* client, const std::vector<std::string>& params)
-{
-	std::string parameter;
-	if (params.size() > 1)
-		parameter = params[1];
-	else
-		parameter = "ircserv";
-	std::string FullMsg = ":ircserv PONG :" + parameter + "\r\n";
-	send(client->Clientfd, FullMsg.c_str(), FullMsg.length(), 0);
-	return 0;
-}
-
-int Server::handlePrivMsg(Client* client, const std::vector<std::string>& params)
-{
-	std::string message;
-	int idx;
-
-	if (params.size() != 2)
-		return ( this->sendToClient(client, "461 :Not enough parameters"), 1);
-	message = ":" + client->nickName + "!" + client->userName + "@localhost PRIVMSG " + params[0] + " :" + params[1] + "\r\n";
-	if (params[0][0] == '#')
-	{
-		idx = this->isChannelExist(params[0]);
-		if (idx == -1)
-			return (this->sendToClient(client, "401 " + params[0] + " :No such nick/channel"), 1);
-		this->sendMsgToChannel(client, this->chanPool[idx]->getMembers(), message);
-	}
-	else
-	{
-		idx = this->findUser(params[0], clients);
-		if (idx == -1)
-			return ( this->sendToClient(client, "401  :No such nick/channel"), 1);
-		//std::cout << message << std::endl;
-		send(clients[idx]->Clientfd, message.c_str(), message.length(), 0);
-	}
-	return 0;
-}
-
-void Server::sendToClient(Client* client, const std::string& message)
-{
-	std::string fullMessage = message + "\r\n";
-	send(client->Clientfd, fullMessage.c_str(), fullMessage.length(), 0);
-}
-
 void Server::checkRegistration(Client* client)
 {
-	if (!client->userName.empty() && !client->nickName.empty() && !client->password.empty()
-		&& client->password == this->Password && client->registered == false)
+	std::cout << "Username	: " << client->getUserName() << std::endl;
+	std::cout << "Nickname	: " << client->getNickName() << std::endl;
+	std::cout << "Password	: " << client->getPassword() << std::endl;
+	if (!client->getUserName().empty() && !client->getNickName().empty() && !client->getPassword().empty()
+		&& client->getPassword() == this->Password && client->getRegistered() == false)
 	{
-		client->registered = true;
+		client->setRegistered(true);
 		this->sendToClient(client, "****************************************************");
-		this->sendToClient(client, "001 " + client->nickName + 
+		this->sendToClient(client, "001 " + client->getNickName() + 
 			" :Welcome to the Internet Relay Network " + 
-			client->nickName + "!" + client->userName + "@" + 
-			client->hostName);
-		this->sendToClient(client, "002 " + client->nickName + 
+			client->getNickName() + "!" + client->getUserName() + "@" + 
+			client->getHostName());
+		this->sendToClient(client, "002 " + client->getNickName() + 
 			" :Your host is ircserv, running version 1.0");
-		this->sendToClient(client, "003 " + client->nickName + 
+		this->sendToClient(client, "003 " + client->getNickName() + 
 			" :This server was created just now");
-		this->sendToClient(client, "004 " + client->nickName + 
+		this->sendToClient(client, "004 " + client->getNickName() + 
 			" :ircserv 1.0 o o");
 			this->sendToClient(client, "****************************************************");
-		//std::cout << "Client " << client->Clientfd << " is now registered as " << client->nickName << std::endl;
+		std::cout << "Client " << client->getClientfd() << " is now registered as " << client->getNickName() << std::endl;
 	}
 }
