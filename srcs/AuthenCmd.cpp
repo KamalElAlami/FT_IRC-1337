@@ -8,7 +8,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	std::string					middle;
 	std::vector <std::string>	params;
 	
-	// (void)client;
+
 	CmdPos = line.find(' ');
 	if (CmdPos == std::string::npos)
 		Command = line;
@@ -16,7 +16,6 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		Command = line.substr(0, CmdPos);
 	for (size_t i = 0; i < Command.length(); i++)
 		Command[i] = toupper(Command[i]);
-
 	if (CmdPos != std::string::npos)
 	{
 		ParamStart = CmdPos + 1;
@@ -33,7 +32,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
-	//std::cout << "Commend : " << Command << ", params : " << params[0] << std::endl;
+	std::cout << "Commend : " << Command << ", params : " << params[0] << std::endl;
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -50,6 +49,9 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handlePrivMsg(client, params);
 	else if (Command == "PART")
 		this->handlePart(client, params);
+	// else if (Command == "SBIKSLA")
+	// 	this->handleSbiksla(client, params);
+
 	//else if (Command == "MODE")
 	//	this->handleMode(client, params);
 	

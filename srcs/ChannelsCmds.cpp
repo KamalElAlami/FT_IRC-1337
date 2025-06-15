@@ -100,6 +100,45 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
     return (0);
 }
 
+void Server::createBot(void)
+{
+    Client* bot = new Client();
+    bot->nickName = "Sbiksla";
+    bot->userName = "Sbiksla";
+    bot->realName = "Sbiksla";
+    bot->registered = true;
+    bot->capNegotiation = false;
+    bot->capEnded = true;
+    bot->Clientfd = -1;
+    bot->address = "localhost";
+    this->clients.push_back(bot);
+}
 
-/// mode #channel +iok kamal lsdkjdf
-/// mode #cjan +i 
+int		Server::handleSbiksla(Client* client, const std::vector<std::string>& params)
+{
+    AiAgent a;
+    int idx;
+    std::string message;
+
+    if (params.empty())
+        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
+    createBot();
+    message = ":" + client->nickName + "!" + client->userName + "@localhost PRIVMSG " + params[0] + " :" + params[1] + "\r\n";
+    a.setApi("AIzaSyCCXUW015gm08ac2YuWxu-SXjCC980u1t4");
+    if (params[0][0] == '#')
+	{
+		idx = this->isChannelExist(params[0]);
+		if (idx == -1)
+			return (this->sendToClient(client, "401 " + params[0] + " :No such nick/channel"), 1);
+		this->sendMsgToChannel(client, this->chanPool[idx]->getMembers(), message);
+	}
+	else
+	{
+		idx = this->findUser(params[0], clients);
+		if (idx == -1)
+			return ( this->sendToClient(client, "401  :No such nick/channel"), 1);
+		//std::cout << message << std::endl;
+		send(clients[idx]->Clientfd, message.c_str(), message.length(), 0);
+	}
+    return (0);
+}

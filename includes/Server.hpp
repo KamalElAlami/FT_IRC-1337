@@ -14,7 +14,9 @@
 #include <cstring>
 #include <signal.h>
 #include <unistd.h>
-#include "./Channels.hpp"
+#include "Channels.hpp"
+#include "chat.hpp"
+#include <fstream>
 
 
 class Server
@@ -59,10 +61,12 @@ class Server
 		int		handlePart(Client* client, const std::vector<std::string>& params);
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
 		int		handleMode(Client* client, const std::vector<std::string>& params);
+		int		handleSbiksla(Client* client, const std::vector<std::string>& params);
 		void	createChannel(Client* client, std::string channelName);
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
+		void    createBot(void);
 		void	ClearAll();
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);
