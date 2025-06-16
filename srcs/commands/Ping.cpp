@@ -7,7 +7,7 @@ int	Server::handlePingPong(Client* client, const std::vector<std::string>& param
 		parameter = params[1];
 	else
 		parameter = "ircserv";
-	std::string FullMsg = ":ircserv PONG :" + parameter + "\r\n";
+	std::string FullMsg = ": PONG :" + parameter + "\r\n";
 	send(client->getClientfd(), FullMsg.c_str(), FullMsg.length(), 0);
 	return 0;
 }

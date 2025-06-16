@@ -39,15 +39,16 @@ void Server::handleClientMessage(int clientFd)
 
 	memset(buffer, 0, 1024);
 	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
-	//std::cout << "Buffer : " << buffer << std::endl;
+	std::cout << "Buffer : " << buffer << std::endl;
 	if (BytesRead == 0)
 		this->handleClientDisconnect(clientFd);
 	else if (BytesRead < 0)
 		throw std::runtime_error( "Error: Failed to receive data from socket using recv()");
-	
+
 	buffer[BytesRead] = '\0';
 	std::string		message(buffer);
-	while ((pos = message.find("\r\n")) != std::string::npos)
+	//std::cout << "Before: Message : " << message << ", line : " << line << std::endl;
+	while ((pos = message.find("\r\n")) != std::string::npos && client)
 	{
 		line = message.substr(0, pos);
 		message.erase(0, pos + 2);
