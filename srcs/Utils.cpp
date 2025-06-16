@@ -24,7 +24,7 @@ void Server::broadcastInChannel(std::vector <Client *> members, std::string mess
     for (size_t i = 0; i < members.size(); i++)
     {
      //   std::cout << "client fd : " << members[i]->Clientfd << std::endl;
-        send(members[i]->Clientfd, message.c_str(), message.length(), 0);
+        send(members[i]->getClientfd(), message.c_str(), message.length(), 0);
     }
 }
 
@@ -35,16 +35,16 @@ void Server::sendMsgToChannel(Client* client, std::vector <Client *> members, st
         message += "\r\n";
     for (size_t i = 0; i < members.size(); i++)
     {
-        if (client->Clientfd == members[i]->Clientfd)
+        if (client->getClientfd() == members[i]->getClientfd())
             continue;
-        send(members[i]->Clientfd, message.c_str(), message.length(), 0);
+        send(members[i]->getClientfd(), message.c_str(), message.length(), 0);
     }
 }
 
 int Server::findUser(std::string name, std::vector <Client*> cli)
 {
     for (size_t i = 0; i < cli.size(); i++)
-        if (name == cli[i]->nickName)
+        if (name == cli[i]->getNickName())
             return(i);
     return (-1);
 }
@@ -56,4 +56,10 @@ size_t numberOfParameterizedArgs(std::string arg)
         if ((arg.c_str()[i] == 'o') || (arg.c_str()[i] == 'k') || (arg.c_str()[i] == 'l'))
             count += 1;
     return (count);
+}
+
+void Server::sendToClient(Client* client, const std::string& message)
+{
+	std::string fullMessage = message + "\r\n";
+	send(client->getClientfd(), fullMessage.c_str(), fullMessage.length(), 0);
 }

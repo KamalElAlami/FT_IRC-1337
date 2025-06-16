@@ -6,27 +6,37 @@
 class Client
 {
 	private:
-	public:
+		bool			registered;
 		int			Clientfd;
-		bool		registered;
-		std::string	address;
 		std::string	nickName;
 		std::string	userName;
 		std::string	password;
 		std::string	realName;
 		std::string	hostName;
-		bool capNegotiation;    // Track if CAP negotiation is in progress
-		bool capEnded;          // Track if client sent CAP END
+		std::string	address;
+	public:
 		Client();
-		Client(Client const & src)
-		{
-			*this = src;
-		};
-		std::string getNick() const
-		{
-			return this->nickName;
-		};
-		~Client(){};
+		Client(Client const & src);
+		//std::string getNick() const;
+		~Client();
+		/*-------------------------------------------*/
+		void			setClientfd(int value);
+		void			setRegistered(bool value);
+		void			setAddress(std::string value);
+		void			setNickName(std::string value);
+		void			setUserName(std::string value);
+		void			setPassword(std::string value);
+		void			setRealName(std::string value);
+		void			setHostName(std::string value);
+		/*-------------------------------------------*/
+		std::string	getAddress() const;
+		int			getClientfd() const;
+		std::string	getNickName() const;
+		std::string	getUserName() const;
+		std::string	getPassword() const;
+		std::string	getRealName() const;
+		std::string	getHostName() const;
+		bool			getRegistered() const;
 };
 
 
