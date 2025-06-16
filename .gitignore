@@ -1,0 +1,12 @@
+*.o
+test.cpp
+errors.txt
+notes
+.DS_Store
+.vscode/
+*.tmp
+*.temp
+.DS_Store?
+notes
+ircserv
+.env

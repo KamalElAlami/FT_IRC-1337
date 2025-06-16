@@ -61,7 +61,7 @@ int Channel::deleteFromContainer(Client* client, std::vector <Client *>& Contain
 {
     for (size_t i = 0; i < Container.size(); i++)
     {
-        if (client->Clientfd == Container[i]->Clientfd)
+        if (client->getClientfd() == Container[i]->getClientfd())
         {
             Container.erase(Container.begin() + i);
             return (1);
