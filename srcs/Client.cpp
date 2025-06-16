@@ -10,7 +10,6 @@ Client::Client()
     this->password = "";
     this->realName = "";
     this->userName = "";
-//    this->process_cont = true;
 }
 
 Client::~Client(){}

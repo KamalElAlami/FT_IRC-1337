@@ -30,13 +30,13 @@ class Client
 		void			setHostName(std::string value);
 		/*-------------------------------------------*/
 		std::string	getAddress() const;
-		int			getClientfd() const;
+		int		getClientfd() const;
 		std::string	getNickName() const;
 		std::string	getUserName() const;
 		std::string	getPassword() const;
 		std::string	getRealName() const;
 		std::string	getHostName() const;
-		bool			getRegistered() const;
+		bool		getRegistered() const;
 };
 
 

@@ -60,9 +60,6 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 
 void Server::checkRegistration(Client* client)
 {
-	//std::cout << "Username	: " << client->getUserName() << std::endl;
-	//std::cout << "Nickname	: " << client->getNickName() << std::endl;
-	//std::cout << "Password	: " << client->getPassword() << std::endl;
 	if (!client->getUserName().empty() && !client->getNickName().empty() && !client->getPassword().empty()
 		&& client->getPassword() == this->Password && client->getRegistered() == false)
 	{

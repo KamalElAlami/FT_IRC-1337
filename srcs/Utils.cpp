@@ -63,3 +63,4 @@ void Server::sendToClient(Client* client, const std::string& message)
 	std::string fullMessage = message + "\r\n";
 	send(client->getClientfd(), fullMessage.c_str(), fullMessage.length(), 0);
 }
+
