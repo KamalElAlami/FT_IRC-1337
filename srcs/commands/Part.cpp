@@ -7,6 +7,7 @@ int Server::handlePart(Client* client, const std::vector<std::string>& params)
     int chanIndex = this->isChannelExist(params[0]);
     if (chanIndex == -1)
         return (this->sendToClient(client, "403 : No such channel"), 1);
+    std::cout << "we are in handlePart" << std::endl;
     int userIndex = this->findUser(client->getNickName(), this->chanPool[chanIndex]->getMembers());
     if (userIndex == -1)
         return (this->sendToClient(client, "442 : You're not on that channel"), 1);

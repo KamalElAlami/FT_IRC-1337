@@ -66,7 +66,7 @@ class Server
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
-		void    createBot(void);
+		Client*    createBot(void);
 		void	ClearAll();
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);

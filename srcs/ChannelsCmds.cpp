@@ -100,7 +100,7 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
     return (0);
 }
 
-void Server::createBot(void)
+Client* Server::createBot(void)
 {
 	Client* bot = new Client();
 	bot->setNickName("Sbiksla");
@@ -110,33 +110,33 @@ void Server::createBot(void)
 	bot->setClientfd(-1);
 	bot->setAddress("localhost");
 	this->clients.push_back(bot);
+    return (bot);
 }
 
 int		Server::handleSbiksla(Client* client, const std::vector<std::string>& params)
 {
+    // potential leaks and maybe unprotected stuff 
+    // usage : /SBIKSLA #channel_NAME :prompt
+    // /SBIKSLA prvmsg :prompt for dm
     AiAgent a;
     int idx;
     std::string message;
 
     if (params.empty())
         return (this->sendToClient(client, "461 :Not enough parameters"), 1);
-    createBot();
-    message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost PRIVMSG " + params[0] + " :" + params[1] + "\r\n";
-    a.setApi("AIzaSyCCXUW015gm08ac2YuWxu-SXjCC980u1t4");
+    Client *bot = createBot();
+    a.setApi("AIzaSyD6izOtFIw6IvaAAKdI7DVy6eARBpefLbY");
+    std::string response = a.startAgent(params[1]);
+    message = ":" + bot->getNickName() + "!" + bot->getUserName() + "@localhost PRIVMSG " + params[0] + " :" + response + "\r\n";
+    std::cout << "Response: " << message << std::endl;
     if (params[0][0] == '#')
 	{
 		idx = this->isChannelExist(params[0]);
 		if (idx == -1)
 			return (this->sendToClient(client, "401 " + params[0] + " :No such nick/channel"), 1);
-		this->sendMsgToChannel(client, this->chanPool[idx]->getMembers(), message);
+		this->sendMsgToChannel(bot, this->chanPool[idx]->getMembers(), message);
 	}
-	else
-	{
-		idx = this->findUser(params[0], clients);
-		if (idx == -1)
-			return ( this->sendToClient(client, "401  :No such nick/channel"), 1);
-		//std::cout << message << std::endl;
-		send(clients[idx]->getClientfd(), message.c_str(), message.length(), 0);
-	}
+	else if (params[0].compare("prvmsg") == 0)
+		send(client->getClientfd(), message.c_str(), message.length(), 0);
     return (0);
 }
