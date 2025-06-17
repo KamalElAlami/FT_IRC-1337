@@ -162,9 +162,9 @@ You can test your IRC server using:
 
 ## 👤 Authors
 
-- Oussama Zahdi [@oussamazahdi](https://github.com/Oussamazahdi)
-- Kemal El Alami (@KamalElAlami)
-- Soufiane Arif (@Soufiixarif)
+- Oussama Zahdi [@Oussamazahdi](https://github.com/Oussamazahdi)
+- Kemal El Alami [@KamalElAlami](https://github.com/KamalElAlami)
+- Soufiane Arif [@Soufiixarif](https://github.com/soufiixarif)
 
 ## 💬 Acknowledgements
 
