@@ -125,4 +125,37 @@ void Server::ClearAll()
 		close(this->polling[i].fd);
 }
 
+//added by soufiix
+Channel *Server::findChannel(const std::string &channelName)const {
+	for (size_t i = 0; i < chanPool.size(); i++){
+		std::cout << "the given: \'"<< channelName << "\' in the server \'" << chanPool[i]->getName() << "\'" << std::endl;
+		if (channelName == chanPool[i]->getName()){
+			std::cout << "succes \n";
+			return chanPool[i];
+		}
+	}
+	std::cout << "failure to find channel\n";
+	return NULL;
+}
 
+int Server::getclientfd(std::string clienName)const {
+	for (size_t i = 0; i < clients.size(); i++){
+		if (clienName == clients[i]->getNickName())
+			return clients[i]->getClientfd();
+	}
+	return -1;
+}
+
+Client *Server::getClient(int clientFd)const {
+	for (size_t i = 0; i < clients.size(); i++){
+		if (clientFd == clients[i]->getClientfd())
+			return clients[i];
+	}
+	return NULL;
+}
+
+void Server::sendError(Client& client, const std::string& errorCode, const std::string& message) {
+    std::string errorMsg = ":ircsev ERROR " + errorCode + " " + client.getNickName() + " :" + message;
+    client.sendMessage(errorMsg);
+}
+//---------------------------------------

@@ -2,11 +2,14 @@
 #define CLIENT_HPP
 
 #include <string>
+#include <iostream>
+#include <sys/socket.h>
+
 
 class Client
 {
 	private:
-		bool			registered;
+		bool		registered;
 		int			Clientfd;
 		std::string	nickName;
 		std::string	userName;
@@ -30,15 +33,21 @@ class Client
 		void			setHostName(std::string value);
 		/*-------------------------------------------*/
 		std::string	getAddress() const;
-		int		getClientfd() const;
+		int			getClientfd() const;
 		std::string	getNickName() const;
 		std::string	getUserName() const;
 		std::string	getPassword() const;
 		std::string	getRealName() const;
 		std::string	getHostName() const;
 		bool		getRegistered() const;
+
+	void sendMessage(const std::string& message) {
+        std::string formatted_message = ":" + nickName + " " + message + "\r\n";
+        ssize_t bytes_sent = send(Clientfd, formatted_message.c_str(), formatted_message.length(), 0);
+        if (bytes_sent == -1) {
+            std::cout << "Error sending message to client " << nickName << std::endl;
+        }
+}
 };
-
-
 
 #endif

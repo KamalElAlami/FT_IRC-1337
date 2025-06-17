@@ -15,9 +15,15 @@
 #include <signal.h>
 #include <unistd.h>
 
+
 class Channel
 {
     private :
+        //added by soufiix
+        std::string topicSetBy;
+        time_t      topicSetAt;
+        bool        isTopicProtected;
+        //--------------------------
         std::string name;
         std::string topic;
         bool        inviteOnly;
@@ -41,6 +47,17 @@ class Channel
         std::string& getPassword(void);
         void addToContainer(Client* client, std::vector <Client *>& Container);
         int deleteFromContainer(Client* client, std::vector <Client *>& Container);
+
+        //added by soufiix
+        bool hasUser(int client_fd);
+        std::string getTopicSetBy()const;
+        time_t getTopicSetAt() const;
+        bool getIsTopicProtected()const;
+        bool isOperator(int client_fd)const ;
+        void setTopic(std::string _topic);
+        void setTopicSetBy(std::string _client);
+        void setTopicSetAt(time_t _time);
+        // -------------------------
 
 };
 #endif

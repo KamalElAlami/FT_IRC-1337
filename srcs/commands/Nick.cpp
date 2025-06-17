@@ -28,7 +28,7 @@ int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 			return (0);
 		}
 		if (this->clients[i] != client && this->clients[i]->getNickName() == nickname)
-			return (this->sendToClient(client, "433 : [" + nickname + "] Nickname is already in use"), this->removeClient(client->getClientfd()) ,1);
+			return (this->sendToClient(client, "433 : [" + nickname + "] Nickname is already in use"), 1); // i have removed this->removeClient(client->getClientfd()) ,
 	}
 	client->setNickName(nickname);
 	return (0);
