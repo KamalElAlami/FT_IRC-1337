@@ -39,7 +39,7 @@ void Server::handleClientMessage(int clientFd)
 
 	memset(buffer, 0, 1024);
 	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
-	std::cout << "Buffer : " << buffer << std::endl;
+	//std::cout << "Buffer : " << buffer << std::endl;
 	if (BytesRead == 0)
 		this->handleClientDisconnect(clientFd);
 	else if (BytesRead < 0)

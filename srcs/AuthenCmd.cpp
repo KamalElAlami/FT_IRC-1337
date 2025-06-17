@@ -7,7 +7,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	std::string					Command;
 	std::string					middle;
 	std::vector <std::string>	params;
-	
+
 
 	CmdPos = line.find(' ');
 	if (CmdPos == std::string::npos)
@@ -32,6 +32,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
+
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -54,7 +55,6 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	//	this->handleMode(client, params);	
 	// else if (Command == "TOPIC")
 	// 	this->handleTopic(client, params);
-
 }
 
 void Server::checkRegistration(Client* client)

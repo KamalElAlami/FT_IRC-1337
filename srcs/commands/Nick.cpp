@@ -6,9 +6,7 @@ int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 	std::string nickname = params[0];
 	std::string announce;
 
-	if (client->getPassword().empty())
-		return (1);
-	if(params.empty())
+	if(params.empty() || client->getPassword().empty() || client->getRemoveClient() == true)
 		return (client->setRemoveClient(true),1);
 	if (nickname.empty())
 		valid = false;
