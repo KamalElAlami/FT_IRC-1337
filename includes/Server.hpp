@@ -17,6 +17,8 @@
 #include "Channels.hpp"
 #include "chat.hpp"
 #include <fstream>
+#include <ctime>
+#include <sstream>
 
 
 class Server

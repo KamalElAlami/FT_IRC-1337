@@ -53,8 +53,12 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	// 	this->handleSbiksla(client, params);
 	//else if (Command == "MODE")
 	//	this->handleMode(client, params);	
-	// else if (Command == "TOPIC")
-	// 	this->handleTopic(client, params);
+	else if (Command == "TOPIC")
+		this->handleTopic(client, params);
+	else if (Command == "INVITE")
+		this->handleInvite(client, params);
+	else if (Command == "KICK")
+		this->handleKick(client, params);
 
 }
 

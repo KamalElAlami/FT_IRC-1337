@@ -141,36 +141,39 @@ int		Server::handleSbiksla(Client* client, const std::vector<std::string>& param
     return (0);
 }
 
-// int		Server::handleTopic(Client* client, const std::vector<std::string>& params){
-//     for (size_t i = 0; i < params.size(); i++)
-//         std::cout << params[i] << std::endl;
-//     if (params.empty())
-//         return (sendToClient(client, "461: Not enough parameters"), 1);
-//     std::string channelName = params[0];
-//     Channel *_channel = findChannel(channelName);
-//     if (!_channel)
-//         return (sendToClient(client, "442" + channelName + " :No such channel"), 1);
-//     if (!_channel->hasUser(client->getClientFd()))
-//         return (sendToClient(client, "442" + channelName + " :You're not on that channel"), 1);
-//     if (params.size() == 1 && _channel){
-//         if (_channel->getTopic().empty())
-//             return (sendToClient(client, "331" + channelName + " :No topic is set"), 1);
-//         else{
-//             sendToClient(client, "332" + channelName + " :" + _channel->getTopic());
-//             sendToClient(client, "333" + channelName + " " + _channel->getTopicSetBy() + " " + std::to_string(_channel->getTopicSetAt()));
-//         }
-//     }
-//     if (params.size() > 1){
-//         if (_channel->getIsTopicProtected() && _channel->isOperator(client->getClientFd()))
-//             return (sendToClient(client, "482" + channelName + " :You're not channel operator"), 1);
-//             _channel->setTopic(params[1]);
-//             _channel->setTopicSetBy(client->nickName);
-//             _channel->setTopicSetAt(std::time(0));
-//     }
-//     std::string message = ":" + client->getPrefix() + " TOPIC " + channelName + ":" + params[1];
-//     this->broadcastInChannel(_channel->getMembers(), message);
-//     return 0;
-// }
+int		Server::handleTopic(Client* client, const std::vector<std::string>& params){
+    for (size_t i = 0; i < params.size(); i++)
+        std::cout << params[i] << std::endl;
+    if (params.empty())
+        return (sendToClient(client, "461: Not enough parameters"), 1);
+    std::string channelName = params[0];
+    Channel *_channel = findChannel(channelName);
+    if (!_channel)
+        return (sendToClient(client, "442 " + channelName + " :No such channel"), 1);
+    if (!_channel->hasUser(client->getClientFd()))
+        return (sendToClient(client, "442 " + channelName + " :You're not on that channel"), 1);
+    if (params.size() == 1 && _channel){
+        if (_channel->getTopic().empty())
+            return (sendToClient(client, "331 " + channelName + " :No topic is set"), 1);
+        else{
+            std::ostringstream oss;
+            oss << _channel->getTopicSetAt();
+            std::string TopicSetAt = oss.str();
+            sendToClient(client, "332 "+ client->getNick() + " " + channelName + " :" + _channel->getTopic());
+            sendToClient(client, "333 " + channelName + " " + _channel->getTopicSetBy() + " " + TopicSetAt);
+        }
+    }
+    if (params.size() > 1){
+        if (_channel->getIsTopicProtected() && _channel->isOperator(client->getClientFd()))
+            return (sendToClient(client, "482 " + channelName + " :You're not channel operator"), 1);
+        _channel->setTopic(params[1]);
+        _channel->setTopicSetBy(client->nickName);
+        _channel->setTopicSetAt(std::time(0));
+    }
+    std::string message = ":" + client->getPrefix() + " TOPIC " + channelName + ":" + params[1];
+    this->broadcastInChannel(_channel->getMembers(), message);
+    return 0;
+}
 
 
 int		Server::handleInvite(Client *client, const std::vector<std::string> &params){
@@ -195,9 +198,9 @@ int		Server::handleInvite(Client *client, const std::vector<std::string> &params
         return(sendError(*client, "443", "user already in channel"),1);
     Client *new_client = getClient(new_clientFd);
     _channel->addToContainer(new_client, _channel->getMembers());
-    sendToClient(new_client, "341" + new_client->getNick() + channelName);
+    sendToClient(client, "341 " + client->getNick() + " " + new_client->getNick() + " " + channelName);
     std::string announce = ":" + client->nickName + "!" + client->userName + "@localhost " + "INVITE " + new_client->nickName + " " + channelName;
-    this->broadcastInChannel(_channel->getMembers(), announce);
+    sendToClient(new_client, announce);
     return 0;
 }
 
@@ -216,12 +219,10 @@ int 	Server::handleKick(Client* client, const std::vector<std::string>& params){
         return (sendError(*client, "482", "You're not an operator in that channel"), 1);
     Client *new_client = getClient(new_clientFd);
     if (_channel->deleteFromContainer(new_client, _channel->getMembers())){
-        std::string comment = "";
-        if (params.size() > 2 && params[2].empty())
-            comment = params[2];
-        else
-            comment = "You have been kicked from the channel.";
-        
+        std::cout << "KICKED\n";
+        std::string comment = (params.size() > 2) ? params[2] : "You have been kicked from the channel: Grow UP!";
+        std::string kickmsg = ":" + client->getNickName() + " KICK " + params[0] + " " + new_client->getNickName() + " :" + comment;
+        sendToClient(new_client, kickmsg);
         std::string announce = ":" + client->nickName + "!" + client->userName + "@localhost " + "KICK " + params[0] + " " +new_client->nickName;
         this->broadcastInChannel(_channel->getMembers(), announce);
     }
