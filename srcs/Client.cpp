@@ -18,11 +18,6 @@ Client::Client(Client const & src)
 {
 	*this = src;
 };
-std::string Client::getNick() const
-{
-	return this->nickName;
-};
-
 void Client::setRegistered(bool value) {
 	this->registered = value;
 }
@@ -49,7 +44,6 @@ void Client::setHostName(std::string value) {
 }
 bool Client::getRegistered() const {
 	return (this->registered);
-	
 }
 int Client::getClientfd() const {
 	return (this->Clientfd);
@@ -78,12 +72,4 @@ std::string Client::getRealName() const {
 std::string Client::getHostName() const {
 	return (this->hostName);
 
-}
-
-int Client::getClientFd(){
-    return Clientfd;
-}
-
-std::string Client::getPrefix() const {
-    return nickName + "!" + userName + "@localhost";
 }

@@ -15,14 +15,17 @@
 #include <signal.h>
 #include <unistd.h>
 
+
 class Channel
 {
     private :
-        std::string name;
-        std::string topic;
+        //added by soufiix
         std::string topicSetBy;
         time_t      topicSetAt;
         bool        isTopicProtected;
+        //--------------------------
+        std::string name;
+        std::string topic;
         bool        inviteOnly;
         bool        restrictedTopic;
         bool        enabledPass;

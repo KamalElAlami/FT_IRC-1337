@@ -49,13 +49,13 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handlePrivMsg(client, params);
 	else if (Command == "PART")
 		this->handlePart(client, params);
-	// else if (Command == "SBIKSLA")
-	// 	this->handleSbiksla(client, params);
+	else if (Command == "SBIKSLA")
+		this->handleSbiksla(client, params);
 	//else if (Command == "MODE")
 	//	this->handleMode(client, params);	
 	else if (Command == "TOPIC")
 		this->handleTopic(client, params);
-	else if (Command == "INVITE")
+	else if(Command == "INVITE")
 		this->handleInvite(client, params);
 	else if (Command == "KICK")
 		this->handleKick(client, params);
@@ -64,9 +64,6 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 
 void Server::checkRegistration(Client* client)
 {
-	std::cout << "Username	: " << client->getUserName() << std::endl;
-	std::cout << "Nickname	: " << client->getNickName() << std::endl;
-	std::cout << "Password	: " << client->getPassword() << std::endl;
 	if (!client->getUserName().empty() && !client->getNickName().empty() && !client->getPassword().empty()
 		&& client->getPassword() == this->Password && client->getRegistered() == false)
 	{

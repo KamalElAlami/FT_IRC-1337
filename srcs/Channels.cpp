@@ -71,9 +71,12 @@ int Channel::deleteFromContainer(Client* client, std::vector <Client *>& Contain
     return (0);
 }
 
+//added by soufiix
+
+
 bool Channel::hasUser(int _client_fd){
     for (size_t i = 0; i < members.size(); i++){
-        if (_client_fd == members[i]->getClientFd())
+        if (_client_fd == members[i]->getClientfd())
             return true;
     }
     return false;
@@ -93,7 +96,7 @@ bool Channel::getIsTopicProtected()const{
 
 bool Channel::isOperator(int client_fd)const {
     for (size_t i = 0; i < ops.size(); i++){
-        if (client_fd == ops[i]->getClientFd())
+        if (client_fd == ops[i]->getClientfd())
             return true;
     }
     return false;

@@ -5,9 +5,13 @@ int Server::isChannelExist(std::string chanName)
 {
     if (chanPool.empty())
         return (-1);
+    if (chanName[0] != '#')
+        chanName = "#" + chanName;
     for (size_t i = 0; i < chanPool.size(); i++)
+    {
         if (chanName == chanPool[i]->getName())
             return (i);
+    }
     return (-1);
 }
 
@@ -63,3 +67,4 @@ void Server::sendToClient(Client* client, const std::string& message)
 	std::string fullMessage = message + "\r\n";
 	send(client->getClientfd(), fullMessage.c_str(), fullMessage.length(), 0);
 }
+
