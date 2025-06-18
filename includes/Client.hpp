@@ -7,6 +7,7 @@ class Client
 {
 	private:
 		bool			registered;
+		bool			remove_client;
 		int			Clientfd;
 		std::string	nickName;
 		std::string	userName;
@@ -28,7 +29,14 @@ class Client
 		void			setPassword(std::string value);
 		void			setRealName(std::string value);
 		void			setHostName(std::string value);
+		void			setRemoveClient(bool value) {
+			this->remove_client = value;
+		};
 		/*-------------------------------------------*/
+		bool			getRemoveClient() const
+		{
+			return (this->remove_client);
+		};
 		std::string	getAddress() const;
 		int		getClientfd() const;
 		std::string	getNickName() const;
