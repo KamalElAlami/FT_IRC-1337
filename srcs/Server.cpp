@@ -154,8 +154,8 @@ Client *Server::getClient(int clientFd)const {
 	return NULL;
 }
 
-void Server::sendError(Client& client, const std::string& errorCode, const std::string& message) {
-    std::string errorMsg = ":ircsev ERROR " + errorCode + " " + client.getNickName() + " :" + message;
-    client.sendMessage(errorMsg);
+void Server::sendError(int clientfd, const std::string& errorCode, const std::string &target,const std::string& message) {
+    std::string errorMsg = ":ircserv " + errorCode + " " + target + " :" + message +"\r\n";
+    send(clientfd, errorMsg.c_str(), errorMsg.length(), 0);
 }
 //---------------------------------------

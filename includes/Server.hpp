@@ -18,6 +18,8 @@
 #include "chat.hpp"
 #include <fstream>
 #include <sstream>
+#include <ctime>
+#include <algorithm>
 
 
 class Server
@@ -72,6 +74,7 @@ class Server
 		std::vector<std::string> splitBySpaces(const std::string& middle);
 		int isChannelExist(std::string chanName);
 		void broadcastInChannel(std::vector <Client *> members, std::string message);
+		void broadcastInChannel(std::vector <Client *> members, std::string message, const Client &client);
 		void sendMsgToChannel(Client* client, std::vector <Client *> members, std::string message);
 		int findUser(std::string name, std::vector <Client*> clients);
 		//added by soufiix
@@ -81,7 +84,7 @@ class Server
 		int		handleTopic(Client* client, const std::vector<std::string>& params);
 		int		handleInvite(Client *client, const std::vector<std::string> &params);
 		int 	handleKick(Client* client, const std::vector<std::string>& params);
-		void 	sendError(Client& client, const std::string& errorCode, const std::string& message);
+		void 	sendError(int clientfd, const std::string& errorCode, const std::string &target, const std::string& message);
 		//-------------------------------
 
 };
