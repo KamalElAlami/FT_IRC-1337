@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "Client.hpp"
+#include "Server.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -22,7 +23,6 @@ class Channel
         //added by soufiix
         std::string topicSetBy;
         time_t      topicSetAt;
-        bool        isTopicProtected;
         //--------------------------
         std::string name;
         std::string topic;
@@ -44,11 +44,14 @@ class Channel
         bool hasUser(int client_fd);
         std::string getTopicSetBy()const;
         time_t getTopicSetAt() const;
-        bool getIsTopicProtected()const;
         bool isOperator(int client_fd)const ;
         void setTopic(std::string _topic);
         void setTopicSetBy(std::string _client);
         void setTopicSetAt(time_t _time);
+        void setInviteOnly(bool status);
+        void setRestrictedTopic(bool status);
+        void setPassword(std::string key);
+        void setMemberLimit(int n);
         // -------------------------
         bool& getInviteOnly(void);
         bool& getRestrictedTopic(void);

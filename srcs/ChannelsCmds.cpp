@@ -51,7 +51,7 @@ int Server::handleJoin(Client* client, const std::vector<std::string>& params)
     return (0);
 }
 
-int Server::handlePart(Client* client, const std::vector<std::string>& params)
+int Server::handlePart(Client* client, const std::vector<std::string>& params)//remove from operator
 {
    if (params.empty())
        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
@@ -85,24 +85,6 @@ int Server::handlePart(Client* client, const std::vector<std::string>& params)
         }
     }
    return (0);
-}
-
-int		Server::handleMode(Client* client, const std::vector<std::string>& params)
-{
-    if (params.empty())
-        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
-    if (numberOfParameterizedArgs(params[1]) > (params.size() - 2))
-        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
-    int chanIndex = this->isChannelExist(params[0]);
-    if (chanIndex == -1)
-        return (this->sendToClient(client, "403 :No such channel"), 1);
-    if (this->findUser(client->getNickName(), chanPool[chanIndex]->getOperators()) == -1)
-        return (this->sendToClient(client, "482 " + params[0] + " :You're not channel operator"), 1);
-    // if (params[1].size() > 2)
-        // hundleJoinededArgs();
-    // hundleShuffledArgs();
-
-    return (0);
 }
 
 Client* Server::createBot(void)
@@ -149,7 +131,7 @@ int		Server::handleSbiksla(Client* client, const std::vector<std::string>& param
 //added by soufiix
 int		Server::handleTopic(Client* client, const std::vector<std::string>& params){
     if (params.empty())
-        return (sendError(client->getClientfd(), "461", "INVITE" ,"Not enough parameters"), 1);
+        return (sendError(client->getClientfd(), "461", "TOPIC" ,"Not enough parameters"), 1);
 
     std::string channelName = params[0];
     Channel *_channel = findChannel(channelName);
@@ -173,7 +155,7 @@ int		Server::handleTopic(Client* client, const std::vector<std::string>& params)
     }
 
     if (params.size() > 1){
-        if (_channel->getIsTopicProtected() && _channel->isOperator(client->getClientfd()))
+        if (_channel->getRestrictedTopic() && !_channel->isOperator(client->getClientfd()))
             return (sendError(client->getClientfd(), "482", channelName ,"You're not an operator in that channel"), 1);
 
         _channel->setTopic(params[1]);
@@ -221,12 +203,12 @@ int		Server::handleInvite(Client *client, const std::vector<std::string> &params
     return 0;
 }
 
-int 	Server::handleKick(Client* client, const std::vector<std::string>& params){
+int 	Server::handleKick(Client* client, const std::vector<std::string>& params){//remove from operators also
     for (size_t i = 0; i < params.size(); i++)
         std::cout << params[i] << std::endl;
 
     if (params.empty() || params.size() != 3)
-         return (sendError(client->getClientfd(), "461", "INVITE" ,"Not enough parameters"), 1);
+         return (sendError(client->getClientfd(), "461", "KICK" ,"Not enough parameters"), 1);
 
     Channel *_channel = findChannel(params[0]);
 
@@ -234,8 +216,8 @@ int 	Server::handleKick(Client* client, const std::vector<std::string>& params){
         return (sendError(client->getClientfd(), "403", params[0], "No such channel"), 1);
 
     int new_clientFd = getclientfd(params[1]);
-    if (new_clientFd == -1)
 
+    if (new_clientFd == -1)
         return (sendError(client->getClientfd(), "401", params[1],"No such nick"), 1);
     if (!_channel->hasUser(client->getClientfd()))
         return (sendError(client->getClientfd(), "442", params[0],"You're not on that channel"), 1);
