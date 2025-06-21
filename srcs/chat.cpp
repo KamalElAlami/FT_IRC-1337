@@ -17,6 +17,8 @@ void AiAgent::setApi(std::string api)
 {
     this->api_key = api;
 }
+
+
 std::string AiAgent::parseResponse(void)
 {
     std::string buffer;
@@ -45,7 +47,8 @@ std::string AiAgent::parseResponse(void)
 
 std::string AiAgent::startAgent(std::string prompt)
 {
-    // i need to escape ; "" '' to prevent cmd injection and i have to try this
+    if (api_key.empty())
+        throw std::runtime_error("API key is not set. Please set it using setApi() method.\n");
     std::string response;
     std::string instruction = "you are a helpful assistant named sbiksla in a irc server you keep you answers short as you can keep it funny a bit you can add some emogies to your answers : ";
     std::string payload = "{\"contents\":[{\"parts\":[{\"text\":\"" + instruction + prompt + "\"}]}]}";

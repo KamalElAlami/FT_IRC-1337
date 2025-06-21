@@ -1,9 +1,12 @@
 #include "../includes/Server.hpp"
 #include <fcntl.h> 
 
-Server::Server(int _fd, int _Port) : SerSockFd(_fd), Port(_Port) {
+Server::Server(int _fd, int _Port) : SerSockFd(_fd), Port(_Port), agent(NULL) {
 }
-Server::~Server() {}
+Server::~Server()
+{
+	delete this->agent;
+}
 Server::Server(Server const & src)
 {
 	*this = src;
@@ -158,4 +161,17 @@ void Server::sendError(Client& client, const std::string& errorCode, const std::
     std::string errorMsg = ":ircsev ERROR " + errorCode + " " + client.getNickName() + " :" + message;
     client.sendMessage(errorMsg);
 }
-//---------------------------------------
+
+Client* Server::getBotInstance(void) {
+    if (agent == NULL) 
+{
+        agent = new Client();
+        agent->setNickName("Sbiksla");
+        agent->setUserName("Sbiksla");
+        agent->setRealName("AI Assistant Bot");
+        agent->setRegistered(true);
+        agent->setClientfd(-1);
+        agent->setAddress("localhost");
+    }
+    return (agent);
+}

@@ -18,14 +18,16 @@
 #include "chat.hpp"
 #include <fstream>
 #include <sstream>
+#include <time.h>
 
 
 class Server
 {
 	private:
-		int							SerSockFd;
-		int							Port;
+		int								SerSockFd;
+		int								Port;
 		static bool						signals;
+		Client							*agent;
 		std::string						Password;
 		std::vector <Client*>			clients;
 		std::vector <struct pollfd>		polling;
@@ -66,7 +68,6 @@ class Server
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
-		Client*	createBot(void);
 		void	ClearAll();
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);
@@ -82,6 +83,8 @@ class Server
 		int		handleInvite(Client *client, const std::vector<std::string> &params);
 		int 	handleKick(Client* client, const std::vector<std::string>& params);
 		void 	sendError(Client& client, const std::string& errorCode, const std::string& message);
+		// bot
+		Client* getBotInstance(void);
 		//-------------------------------
 
 };
