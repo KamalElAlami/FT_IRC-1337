@@ -4,8 +4,9 @@
 
 Channel::Channel(std::string n) : name(n)
 {
+    topic = "";
     inviteOnly = false;
-    restrictedTopic = false;
+    restrictedTopic = true;
     enabledPass = false;
     memberLimit = -1;
 }
@@ -88,10 +89,6 @@ time_t Channel::getTopicSetAt() const{
     return this->topicSetAt;
 }
 
-bool Channel::getIsTopicProtected()const{
-    return this->isTopicProtected;
-}
-
 bool Channel::isOperator(int client_fd)const {
     for (size_t i = 0; i < ops.size(); i++){
         if (client_fd == ops[i]->getClientfd())
@@ -110,4 +107,20 @@ void Channel::setTopicSetBy(std::string _client){
 
 void Channel::setTopicSetAt(time_t _time){
     this->topicSetAt = _time;
+}
+
+void Channel::setInviteOnly(bool status){
+    this->inviteOnly = status;
+}
+
+void Channel::setRestrictedTopic(bool status){
+    this->restrictedTopic = status;
+}
+
+void Channel::setPassword(std::string key){
+    this->Password = key;
+}
+
+void Channel::setMemberLimit(int n){
+    this->memberLimit = n;
 }

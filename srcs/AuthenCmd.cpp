@@ -51,10 +51,8 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handlePart(client, params);
 	else if (Command == "SBIKSLA")
 		this->handleSbiksla(client, params);
-	//else if (Command == "MODE")
-	//	this->handleMode(client, params);	
-	// else if (Command == "TOPIC")
-	// 	this->handleTopic(client, params);
+	else if (Command == "MODE")
+		this->handleMode(client, params);	
 	else if (Command == "TOPIC")
 		this->handleTopic(client, params);
 	else if(Command == "INVITE")

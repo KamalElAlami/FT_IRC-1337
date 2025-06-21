@@ -32,6 +32,16 @@ void Server::broadcastInChannel(std::vector <Client *> members, std::string mess
     }
 }
 
+void Server::broadcastInChannel(std::vector <Client *> members, std::string message, const Client &client)
+{
+    if (message.length() < 2 || message.substr(message.length() - 2) != "\r\n")
+        message += "\r\n";
+    for (size_t i = 0; i < members.size(); i++){
+        if (client.getClientfd() != members[i]->getClientfd())
+            send(members[i]->getClientfd(), message.c_str(), message.length(), 0);
+    }
+}
+
 
 void Server::sendMsgToChannel(Client* client, std::vector <Client *> members, std::string message)
 {
