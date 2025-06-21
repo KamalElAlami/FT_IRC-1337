@@ -17,6 +17,8 @@ Thumbs.db
 
 # Visual Studio Code
 .vscode/
+.vscode/
+
 *.code-workspace
 
 # Additional common files to ignore
