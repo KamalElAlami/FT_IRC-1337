@@ -1,7 +1,7 @@
 #include "../../includes/Server.hpp"
 
 int		Server::handleMode(Client* client, const std::vector<std::string>& params){
-    (void)client;
+    // (void)client;
     for(size_t i = 0; i < params.size(); i++){
         std::cout << "params de " << i << "is :" << params[i] << std::endl;
     }
@@ -117,12 +117,14 @@ void Server::handelkeymode(Client *client, const std::vector<std::string>&params
         }
         std::string key = params[argindex];
         _channel.setPassword(key);
+        _channel.setEnabledPass(true);
         argindex++;
     }
     else{
         if (params.size() > argindex)
             argindex ++;
         _channel.setPassword("");
+        _channel.setEnabledPass(false);
     }
     std::cout << "channel key: " << _channel.getPassword() << std::endl;
 

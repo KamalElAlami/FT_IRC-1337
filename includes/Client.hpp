@@ -11,6 +11,7 @@ class Client
 	private:
 		bool			registered;
 		bool			remove_client;
+		bool			is_invited;
 		int			Clientfd;
 		std::string	nickName;
 		std::string	userName;
@@ -32,6 +33,7 @@ class Client
 		void			setPassword(std::string value);
 		void			setRealName(std::string value);
 		void			setHostName(std::string value);
+		void			setInvite(bool stt);
 		void			setRemoveClient(bool value) {
 			this->remove_client = value;
 		};
@@ -48,6 +50,7 @@ class Client
 		std::string	getRealName() const;
 		std::string	getHostName() const;
 		bool		getRegistered() const;
+		bool		checkInvite() const;
 
 	void sendMessage(const std::string& message) {
         std::string formatted_message = ":" + nickName + " " + message + "\r\n";

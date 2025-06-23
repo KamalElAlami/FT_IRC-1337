@@ -32,7 +32,9 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
-
+	std::cout << Command << std::endl;
+	for (size_t i = 0; i < params.size(); i++)
+		std::cout << params[i] << std::endl;
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")

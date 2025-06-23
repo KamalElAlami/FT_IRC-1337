@@ -51,6 +51,7 @@ class Channel
         void setInviteOnly(bool status);
         void setRestrictedTopic(bool status);
         void setPassword(std::string key);
+        void setEnabledPass(bool stt);
         void setMemberLimit(int n);
         // -------------------------
         bool& getInviteOnly(void);

@@ -43,8 +43,14 @@ void Client::setRealName(std::string value) {
 void Client::setHostName(std::string value) {
 	this->hostName = value;
 }
+void Client::setInvite(bool stt){
+	is_invited = stt;
+}
 bool Client::getRegistered() const {
 	return (this->registered);
+}
+bool Client::checkInvite() const {
+	return (this->is_invited);
 }
 int Client::getClientfd() const {
 	return (this->Clientfd);

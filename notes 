@@ -1,1 +1,84 @@
-add @ for operators names
+add @ for operators names 
+handel mode user
+display mode : /mode like --help rpl with creation date
+except the kicked user from recieving the channel notice 
+fix part and do other check for kick 
+if the user was invited already and kicked the invite flag will be 0 again
+in join check for password and invite only [x]
+
+prcmsg check if join
+
+
+
+
+=================================================================
+==83581==ERROR: AddressSanitizer: heap-use-after-free on address 0x511000000184 at pc 0x582b5290d88b bp 0x7ffe8a8fc210 sp 0x7ffe8a8fc200
+READ of size 4 at 0x511000000184 thread T0
+    #0 0x582b5290d88a in Client::getClientfd() const srcs/Client.cpp:50
+    #1 0x582b52926d2f in Server::broadcastInChannel(std::vector<Client*, std::allocator<Client*> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) srcs/Utils.cpp:31
+    #2 0x582b5291781f in Server::createChannel(Client*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) srcs/ChannelsCmds.cpp:35
+    #3 0x582b5291803b in Server::handleJoin(Client*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) srcs/ChannelsCmds.cpp:51
+    #4 0x582b5290e863 in Server::ParseCommand(Client*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) srcs/AuthenCmd.cpp:49
+    #5 0x582b52913bc9 in Server::handleClientMessage(int) srcs/handleConnections.cpp:56
+    #6 0x582b52905221 in Server::Start_Server() srcs/Server.cpp:53
+    #7 0x582b52904655 in main /home/dedsec/FT_IRC-1337/main.cpp:30
+    #8 0x7dbebfe2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #9 0x7dbebfe2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #10 0x582b52903dc4 in _start (/home/dedsec/FT_IRC-1337/ircserv+0x7dc4) (BuildId: 6f409e557d335abaa3a4be613669fd7d3c043ab1)
+
+0x511000000184 is located 4 bytes inside of 200-byte region [0x511000000180,0x511000000248)
+freed by thread T0 here:
+    #0 0x7dbec06ff0a8 in operator delete(void*) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:152
+    #1 0x582b52913f65 in Server::removeClient(int) srcs/handleConnections.cpp:66
+    #2 0x582b5291425b in Server::handleClientDisconnect(int) srcs/handleConnections.cpp:85
+    #3 0x582b52913907 in Server::handleClientMessage(int) srcs/handleConnections.cpp:44
+    #4 0x582b52905221 in Server::Start_Server() srcs/Server.cpp:53
+    #5 0x582b52904655 in main /home/dedsec/FT_IRC-1337/main.cpp:30
+    #6 0x7dbebfe2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #7 0x7dbebfe2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #8 0x582b52903dc4 in _start (/home/dedsec/FT_IRC-1337/ircserv+0x7dc4) (BuildId: 6f409e557d335abaa3a4be613669fd7d3c043ab1)
+
+previously allocated by thread T0 here:
+    #0 0x7dbec06fe548 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x582b52913376 in Server::handleNewConnection() srcs/handleConnections.cpp:15
+    #2 0x582b529051b5 in Server::Start_Server() srcs/Server.cpp:51
+    #3 0x582b52904655 in main /home/dedsec/FT_IRC-1337/main.cpp:30
+    #4 0x7dbebfe2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #5 0x7dbebfe2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #6 0x582b52903dc4 in _start (/home/dedsec/FT_IRC-1337/ircserv+0x7dc4) (BuildId: 6f409e557d335abaa3a4be613669fd7d3c043ab1)
+
+SUMMARY: AddressSanitizer: heap-use-after-free srcs/Client.cpp:50 in Client::getClientfd() const
+Shadow bytes around the buggy address:
+  0x510fffffff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x510fffffff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x511000000000: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+  0x511000000080: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x511000000100: fd fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>0x511000000180:[fd]fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x511000000200: fd fd fd fd fd fd fd fd fd fa fa fa fa fa fa fa
+  0x511000000280: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x511000000300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x511000000380: 00 fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x511000000400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==83581==ABORTING
+➜  FT_IRC-1337 git:(master) ✗ 
+➜  FT_IRC-1337 git:(master) ✗ 

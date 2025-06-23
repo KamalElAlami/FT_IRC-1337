@@ -72,6 +72,10 @@ int Channel::deleteFromContainer(Client* client, std::vector <Client *>& Contain
 
 //added by soufiix
 
+void Channel::setEnabledPass(bool stt)
+{
+    enabledPass = stt;
+}
 
 bool Channel::hasUser(int _client_fd){
     for (size_t i = 0; i < members.size(); i++){

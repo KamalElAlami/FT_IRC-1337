@@ -19,17 +19,8 @@ void Server::broadcastInChannel(std::vector <Client *> members, std::string mess
 {
     if (message.length() < 2 || message.substr(message.length() - 2) != "\r\n")
         message += "\r\n";
-//    std::cout << message << std::endl;
-//    for (size_t i = 0; i < members.size(); i++)
-//        {
-//            std::cout << members[i]->Clientfd << " ";
-//        }
-     //   std::cout << std::endl;
     for (size_t i = 0; i < members.size(); i++)
-    {
-     //   std::cout << "client fd : " << members[i]->Clientfd << std::endl;
         send(members[i]->getClientfd(), message.c_str(), message.length(), 0);
-    }
 }
 
 void Server::broadcastInChannel(std::vector <Client *> members, std::string message, const Client &client)
@@ -51,6 +42,7 @@ void Server::sendMsgToChannel(Client* client, std::vector <Client *> members, st
     {
         if (client->getClientfd() == members[i]->getClientfd())
             continue;
+        std::cout << members[i]->getNickName() << std::endl;
         send(members[i]->getClientfd(), message.c_str(), message.length(), 0);
     }
 }
@@ -74,7 +66,11 @@ size_t numberOfParameterizedArgs(std::string arg)
 
 void Server::sendToClient(Client* client, const std::string& message)
 {
-	std::string fullMessage = message + "\r\n";
+    std::string fullMessage = message;
+    if (fullMessage.length() < 2 || fullMessage.substr(fullMessage.length() - 2) != "\r\n")
+    {
+        fullMessage += "\r\n";
+    }
 	send(client->getClientfd(), fullMessage.c_str(), fullMessage.length(), 0);
 }
 

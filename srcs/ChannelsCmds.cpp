@@ -15,11 +15,12 @@ static std::vector<std::string> ft_split(std::string str, char c)
     return (words);
 }
 
-void    Server::createChannel(Client* client , std::string channelName)
+void    Server::createChannel(Client* client , std::string channelName, const std::vector<std::string>& params)
 {
     std::string announce;
     int chanIndex;
 
+    announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     chanIndex = this->isChannelExist(channelName);
     if (chanIndex == -1)
     {
@@ -27,9 +28,22 @@ void    Server::createChannel(Client* client , std::string channelName)
         this->chanPool.push_back(tmp);
         tmp->addToContainer(client, tmp->getOperators());
         chanIndex = this->chanPool.size() - 1;
+
+        this->chanPool[chanIndex]->getMembers().push_back(client);
+        return (this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce));
     }
+    if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() <= (int)(this->chanPool[chanIndex]->getMembers().size() + 1))
+        return (sendToClient(client, "471 " + channelName + " :Cannot join channel (+l)"));
+    if (this->chanPool[chanIndex]->getInviteOnly() && !client->checkInvite())
+        return (sendToClient(client, "473 " + channelName + " :Cannot join channel (+i)"));
+    if (this->chanPool[chanIndex]->getEnabledPass())
+    {
+        if (params.size() < 2 || this->chanPool[chanIndex]->getPassword() != params[1])
+            return (sendToClient(client, "475 " + channelName + " :Cannot join channel (+k)"));
+    }
+    if (this->chanPool[chanIndex]->getInviteOnly())
+        client->setInvite(false);
     this->chanPool[chanIndex]->getMembers().push_back(client);
-    announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
 }
 
@@ -40,14 +54,14 @@ int Server::handleJoin(Client* client, const std::vector<std::string>& params)
         return (this->sendToClient(client, "461 :Not enough parameters"), 1);
     if (params[0][0] != '#')
         return (this->sendToClient(client, "403 :Forbidden channel name"), 1);
-    if (params[0].find(","))
+    if (params[0].find(",") != std::string::npos)
     {
         std::vector<std::string> canals = ft_split(params[0], ',');
         for (size_t i = 0; i < canals.size(); i++)
-            createChannel(client, canals[i]);
+            createChannel(client, canals[i], params);
     }
     else
-        createChannel(client, params[0]);
+        createChannel(client, params[0], params);
     return (0);
 }
 
@@ -64,41 +78,41 @@ int containsDangerousChars(const std::string& prompt)
     }
     return (0);
 }
-int Server::handlePart(Client* client, const std::vector<std::string>& params)//remove from operator
-{
-   if (params.empty())
-       return (this->sendToClient(client, "461 :Not enough parameters"), 1);
+// int Server::handlePart(Client* client, const std::vector<std::string>& params)//remove from operator
+// {
+//    if (params.empty())
+//        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
 
-    std::stringstream ss(params[0]);
-    std::string channelName;
+//     std::stringstream ss(params[0]);
+//     std::string channelName;
     
-    while(std::getline(ss, channelName, ',')){
+//     while(std::getline(ss, channelName, ',')){
 
-        Channel *_channel = findChannel(channelName);
+//         Channel *_channel = findChannel(channelName);
         
-        if (_channel == NULL){
-            sendError(client->getClientfd(), "403", channelName, "No such channel");
-            continue;
-        }
+//         if (_channel == NULL){
+//             sendError(client->getClientfd(), "403", channelName, "No such channel");
+//             continue;
+//         }
         
-        if (!_channel->hasUser(client->getClientfd())){
-            sendError(client->getClientfd(), "442", channelName,"You're not on that channel");
-            continue;
-        }
+//         if (!_channel->hasUser(client->getClientfd())){
+//             sendError(client->getClientfd(), "442", channelName,"You're not on that channel");
+//             continue;
+//         }
         
-        std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost"+ " PART " + channelName;
-        if (params.size() > 1 && !params[1].empty())
-           message += " :" + params[1];
-        sendToClient(client, message);
-        broadcastInChannel(_channel->getMembers(), message);
-        _channel->deleteFromContainer(client, _channel->getMembers());
-        if (_channel->getMembers().size() == 0) {
-            std::vector<Channel*>::iterator it = std::find(chanPool.begin(), chanPool.end(), _channel);
-            chanPool.erase(it);
-        }
-    }
-   return (0);
-}
+//         std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost"+ " PART " + channelName;
+//         if (params.size() > 1 && !params[1].empty())
+//            message += " :" + params[1];
+//         sendToClient(client, message);
+//         broadcastInChannel(_channel->getMembers(), message);
+//         _channel->deleteFromContainer(client, _channel->getMembers());
+//         if (_channel->getMembers().size() == 0) {
+//             std::vector<Channel*>::iterator it = std::find(chanPool.begin(), chanPool.end(), _channel);
+//             chanPool.erase(it);
+//         }
+//     }
+//    return (0);
+// }
 
 int		Server::handleSbiksla(Client* client, const std::vector<std::string>& params)
 {
@@ -199,15 +213,17 @@ int		Server::handleInvite(Client *client, const std::vector<std::string> &params
     if (_channel->hasUser(new_clientFd))
         return(sendError(client->getClientfd(), "443", new_client->getNickName(), "is already on channel"),1);
 
-    _channel->addToContainer(new_client, _channel->getMembers());
-
+    // _channel->addToContainer(new_client, _channel->getMembers());
+    //flag of invited client
+    client->setInvite(true);
     sendToClient(client, "341 " + client->getNickName() + " " + new_client->getNickName() + " " + channelName);
     std::string announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "INVITE " + new_client->getNickName() + " " + channelName;
     sendToClient(new_client, announce);
     return 0;
 }
 
-int 	Server::handleKick(Client* client, const std::vector<std::string>& params){//remove from operators also
+int 	Server::handleKick(Client* client, const std::vector<std::string>& params)
+{//remove from operators also 
     for (size_t i = 0; i < params.size(); i++)
         std::cout << params[i] << std::endl;
 
