@@ -1,6 +1,6 @@
 add @ for operators names [x]
 handel mode user [x]
-display mode : /mode like --help rpl with creation date
+display mode : /mode like --help rpl with creation date [x]
 except the kicked user from recieving the channel notice 
 fix part and do other check for kick 
 if the user was invited already and kicked the invite flag will be 0 again [x]

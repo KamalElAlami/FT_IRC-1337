@@ -99,41 +99,6 @@ int containsDangerousChars(const std::string& prompt)
     }
     return (0);
 }
-// int Server::handlePart(Client* client, const std::vector<std::string>& params)//remove from operator
-// {
-//    if (params.empty())
-//        return (this->sendToClient(client, "461 :Not enough parameters"), 1);
-
-//     std::stringstream ss(params[0]);
-//     std::string channelName;
-    
-//     while(std::getline(ss, channelName, ',')){
-
-//         Channel *_channel = findChannel(channelName);
-        
-//         if (_channel == NULL){
-//             sendError(client->getClientfd(), "403", channelName, "No such channel");
-//             continue;
-//         }
-        
-//         if (!_channel->hasUser(client->getClientfd())){
-//             sendError(client->getClientfd(), "442", channelName,"You're not on that channel");
-//             continue;
-//         }
-        
-//         std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost"+ " PART " + channelName;
-//         if (params.size() > 1 && !params[1].empty())
-//            message += " :" + params[1];
-//         sendToClient(client, message);
-//         broadcastInChannel(_channel->getMembers(), message);
-//         _channel->deleteFromContainer(client, _channel->getMembers());
-//         if (_channel->getMembers().size() == 0) {
-//             std::vector<Channel*>::iterator it = std::find(chanPool.begin(), chanPool.end(), _channel);
-//             chanPool.erase(it);
-//         }
-//     }
-//    return (0);
-// }
 
 int		Server::handleSbiksla(Client* client, const std::vector<std::string>& params)
 {
@@ -166,7 +131,8 @@ int		Server::handleSbiksla(Client* client, const std::vector<std::string>& param
 }
 
 //added by soufiix
-int		Server::handleTopic(Client* client, const std::vector<std::string>& params){
+int		Server::handleTopic(Client* client, const std::vector<std::string>& params)
+{
     if (params.empty())
         return (sendError(client->getClientfd(), "461", "TOPIC" ,"Not enough parameters"), 1);
 

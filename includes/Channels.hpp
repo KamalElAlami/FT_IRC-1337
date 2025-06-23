@@ -21,6 +21,7 @@ class Channel
 {
     private :
         //added by soufiix
+        time_t      creationTime;
         std::string topicSetBy;
         time_t      topicSetAt;
         //--------------------------
@@ -53,7 +54,9 @@ class Channel
         void setPassword(std::string key);
         void setEnabledPass(bool stt);
         void setMemberLimit(int n);
+        void setCreationTime(time_t tt);
         // -------------------------
+        time_t& getCreationTime(void);
         bool& getInviteOnly(void);
         bool& getRestrictedTopic(void);
         bool& getEnabledPass(void);

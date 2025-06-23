@@ -9,6 +9,7 @@ Channel::Channel(std::string n) : name(n)
     restrictedTopic = true;
     enabledPass = false;
     memberLimit = -1;
+    creationTime = std::time(0);
 }
 
 std::string& Channel::getName(void)
@@ -93,6 +94,11 @@ time_t Channel::getTopicSetAt() const{
     return this->topicSetAt;
 }
 
+time_t& Channel::getCreationTime() 
+{
+    return (creationTime);
+}
+
 bool Channel::isOperator(int client_fd)const {
     for (size_t i = 0; i < ops.size(); i++){
         if (client_fd == ops[i]->getClientfd())
@@ -113,6 +119,10 @@ void Channel::setTopicSetAt(time_t _time){
     this->topicSetAt = _time;
 }
 
+void Channel::setCreationTime(time_t tt)
+{
+    creationTime = tt;
+}
 void Channel::setInviteOnly(bool status){
     this->inviteOnly = status;
 }

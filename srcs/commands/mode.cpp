@@ -4,6 +4,8 @@ void Server::displayModes(Client* client, Channel* channel)
 {
     std::string modes = "+";
     std::string Params = "";
+    std::ostringstream creationTime;
+    creationTime << channel->getCreationTime();
     
     if (channel->getInviteOnly()) modes += "i";
     if (channel->getRestrictedTopic()) modes += "t";
@@ -20,14 +22,12 @@ void Server::displayModes(Client* client, Channel* channel)
         Params += " " + channel->getPassword();
     }
     sendToClient(client, "324 " + client->getNickName() + " " + channel->getName() + " " + modes + Params);
-    
-    // RPL_CREATIONTIME (329) - next khasni n implement creation time to send 329 rpl
+    sendToClient(client, "329 " + client->getNickName() + " " + channel->getName() + " " + creationTime.str());
 
 }
 
 int		Server::handleMode(Client* client, const std::vector<std::string>& params)
 {
-    // (void)client;
     for(size_t i = 0; i < params.size(); i++){
         std::cout << "params de " << i << "is :" << params[i] << std::endl;
     }
