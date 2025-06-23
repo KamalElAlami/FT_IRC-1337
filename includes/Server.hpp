@@ -66,6 +66,8 @@ class Server
 		int		handleMode(Client* client, const std::vector<std::string>& params);
 		int		handleSbiksla(Client* client, const std::vector<std::string>& params);
 		void	createChannel(Client* client, std::string channelName, const std::vector<std::string>& params);
+		void	sendNamesRpl(Client* client, std::string channelName, int chanIndex);
+		void	displayModes(Client* client, Channel* channel);
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);

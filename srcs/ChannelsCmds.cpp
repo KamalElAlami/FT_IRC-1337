@@ -1,6 +1,25 @@
 #include "../includes/Server.hpp"
 #include "../includes/Channels.hpp"
 
+void Server::sendNamesRpl(Client* client, std::string channelName, int chanIndex)
+{
+    std::string namesList = "353 " + client->getNickName() + " = " + channelName + " :";
+    
+    for (size_t i = 0; i < this->chanPool[chanIndex]->getMembers().size(); i++)
+    {
+        Client* member = this->chanPool[chanIndex]->getMembers()[i];
+        
+        if (this->findUser(member->getNickName(), this->chanPool[chanIndex]->getOperators()) != -1)
+            namesList += "@";
+        namesList += member->getNickName();
+        if (i < this->chanPool[chanIndex]->getMembers().size() - 1)
+            namesList += " ";
+    }
+    
+    sendToClient(client, namesList);
+    sendToClient(client, "366 " + client->getNickName() + " " + channelName + " :End of /NAMES list");
+}
+
 static std::vector<std::string> ft_split(std::string str, char c)
 {
     size_t start = 0;
@@ -45,6 +64,7 @@ void    Server::createChannel(Client* client , std::string channelName, const st
         client->setInvite(false);
     this->chanPool[chanIndex]->getMembers().push_back(client);
     this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
+    sendNamesRpl(client, channelName, chanIndex);
 }
 
 int Server::handleJoin(Client* client, const std::vector<std::string>& params)
@@ -57,6 +77,7 @@ int Server::handleJoin(Client* client, const std::vector<std::string>& params)
     if (params[0].find(",") != std::string::npos)
     {
         std::vector<std::string> canals = ft_split(params[0], ',');
+        // std::vector<std::string> pass = ft_split(params[1], ','); // split multiple passwords pass1,pass2,pass3
         for (size_t i = 0; i < canals.size(); i++)
             createChannel(client, canals[i], params);
     }

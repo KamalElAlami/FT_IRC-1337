@@ -1,12 +1,12 @@
-add @ for operators names 
-handel mode user
+add @ for operators names [x]
+handel mode user [x]
 display mode : /mode like --help rpl with creation date
 except the kicked user from recieving the channel notice 
 fix part and do other check for kick 
-if the user was invited already and kicked the invite flag will be 0 again
+if the user was invited already and kicked the invite flag will be 0 again [x]
 in join check for password and invite only [x]
 
-prcmsg check if join
+prvmsg check if join [x]
 
 
 

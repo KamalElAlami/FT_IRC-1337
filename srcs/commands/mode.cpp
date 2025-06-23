@@ -1,18 +1,48 @@
 #include "../../includes/Server.hpp"
 
-int		Server::handleMode(Client* client, const std::vector<std::string>& params){
+void Server::displayModes(Client* client, Channel* channel)
+{
+    std::string modes = "+";
+    std::string Params = "";
+    
+    if (channel->getInviteOnly()) modes += "i";
+    if (channel->getRestrictedTopic()) modes += "t";
+    if (channel->getMemberLimit() != -1)
+    {
+        modes += "l";
+        std::ostringstream limit;
+        limit << channel->getMemberLimit();
+        Params += " " + limit.str();
+    }
+    if (channel->getEnabledPass())
+    {
+        modes += "k";
+        Params += " " + channel->getPassword();
+    }
+    sendToClient(client, "324 " + client->getNickName() + " " + channel->getName() + " " + modes + Params);
+    
+    // RPL_CREATIONTIME (329) - next khasni n implement creation time to send 329 rpl
+
+}
+
+int		Server::handleMode(Client* client, const std::vector<std::string>& params)
+{
     // (void)client;
     for(size_t i = 0; i < params.size(); i++){
         std::cout << "params de " << i << "is :" << params[i] << std::endl;
     }
-    if (params.size() < 2)
+    if (params.size() < 1)
         return (sendError(client->getClientfd(), "461", "MODE" ,"Not enough parameters"), 1);
-
+    if (params[0][0] != '#')
+        return (1);
     std::string channelName = params[0];
     Channel *_channel = findChannel(channelName);
-
+        
     if (!_channel)
         return (sendError(client->getClientfd(), "403", channelName, "No such channel"), 1);
+        
+    if (params.size() == 1)
+        return (displayModes(client, _channel), 1);
 
     if (!_channel->isOperator(client->getClientfd()))
         return (sendError(client->getClientfd(), "482", channelName ,"You're not an operator in that channel"), 1);
