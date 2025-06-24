@@ -62,10 +62,12 @@ class Server
 		int		handlePingPong(Client* client, const std::vector<std::string>& params);
 		int		handlePrivMsg(Client* client, const std::vector<std::string>& params);
 		int		handlePart(Client* client, const std::vector<std::string>& params);
+		int		partUserByUser(Client* client, std::string channel, const std::vector<std::string>& params);
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
 		int		handleMode(Client* client, const std::vector<std::string>& params);
 		int		handleSbiksla(Client* client, const std::vector<std::string>& params);
 		void	createChannel(Client* client, std::string channelName, const std::vector<std::string>& params);
+		void    createChannel(Client* client , std::string channelName, const std::vector<std::string>& params, std::string pass);
 		void	sendNamesRpl(Client* client, std::string channelName, int chanIndex);
 		void	displayModes(Client* client, Channel* channel);
 		void	removeClient(int ClientFd);
@@ -95,6 +97,7 @@ class Server
 
 };
 
-size_t numberOfParameterizedArgs(std::string arg);
+std::vector<std::string> ft_split(std::string str, char c);
+
 
 #endif

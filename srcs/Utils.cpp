@@ -55,14 +55,28 @@ int Server::findUser(std::string name, std::vector <Client*> cli)
     return (-1);
 }
 
-size_t numberOfParameterizedArgs(std::string arg)
+std::vector<std::string> ft_split(std::string str, char c)
 {
-    size_t count = 0;
-    for (int i = 0; arg.c_str()[i]; i++)
-        if ((arg.c_str()[i] == 'o') || (arg.c_str()[i] == 'k') || (arg.c_str()[i] == 'l'))
-            count += 1;
-    return (count);
+    size_t start = 0;
+    size_t end = 0;
+    std::vector<std::string> words;
+
+    while ((end = str.find(c, start)) != std::string::npos) {
+        words.push_back(str.substr(start, end - start));
+        start = end + 1;
+    }
+    words.push_back(str.substr(start));
+    return (words);
 }
+
+// size_t numberOfParameterizedArgs(std::string arg)
+// {
+//     size_t count = 0;
+//     for (int i = 0; arg.c_str()[i]; i++)
+//         if ((arg.c_str()[i] == 'o') || (arg.c_str()[i] == 'k') || (arg.c_str()[i] == 'l'))
+//             count += 1;
+//     return (count);
+// }
 
 void Server::sendToClient(Client* client, const std::string& message)
 {
