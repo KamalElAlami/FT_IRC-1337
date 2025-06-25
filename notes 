@@ -1,9 +1,12 @@
 add @ for operators names [x]
 handel mode user [x]
 display mode : /mode like --help rpl with creation date [x]
-except the kicked user from recieving the channel notice (bullshit)
-fix part and do other check for kick 
+fix part and do other check for kick [x]
 if the user was invited already and kicked the invite flag will be 0 again [x]
 in join check for password and invite only [x]
 handle signals 
 prvmsg check if join [x]
+Relay
+skip empty channel names (join)
+00:38 -!- [ircserv] You're not an operator in that channel
+invite logic completely currupted create map key value for every channel in the server

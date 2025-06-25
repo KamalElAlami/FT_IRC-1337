@@ -36,13 +36,12 @@ int	Server::get_Port() const {
 
 void Server::Start_Server()
 {
-	try {
-		this->Build_Server();
-		while (true)
-		{
+	this->Build_Server();
+	while (true)
+	{
+		try {
 			if (poll(this->polling.data(), this->polling.size(), -1) == -1)
-			throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
-			
+				throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
 			for (size_t i = 0; i < this->polling.size(); i++)
 			{
 				if (this->polling[i].revents & POLLIN)
@@ -54,12 +53,12 @@ void Server::Start_Server()
 				}
 			}
 		}
-	}
-	catch(const std::exception& e)
-	{
-		this->ClearAll();
-		std::cerr << e.what() << std::endl;
-		exit (1);
+		catch(const std::exception& e)
+		{
+			// this->ClearAll();
+			std::cerr << e.what() << std::endl;
+			// exit (1);
+		}
 	}
 }
 
@@ -174,4 +173,13 @@ Client* Server::getBotInstance(void) {
         agent->setAddress("localhost");
     }
     return (agent);
+}
+
+void	Server::removeChannelFromInvites(std::vector <Client*>	clients, std::string channel)
+{
+	for (size_t i = 0; i < clients.size(); i++)
+	{
+		if (clients[i]->getInvites().count(channel)) //check
+			clients[i]->getInvites().erase(channel);
+	}
 }

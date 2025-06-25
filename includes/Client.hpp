@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <sys/socket.h>
+#include <map>
 
 
 class Client
@@ -11,7 +12,8 @@ class Client
 	private:
 		bool			registered;
 		bool			remove_client;
-		bool			is_invited;
+		std::map <std::string, bool> invites;
+
 		int			Clientfd;
 		std::string	nickName;
 		std::string	userName;
@@ -33,15 +35,12 @@ class Client
 		void			setPassword(std::string value);
 		void			setRealName(std::string value);
 		void			setHostName(std::string value);
-		void			setInvite(bool stt);
-		void			setRemoveClient(bool value) {
-			this->remove_client = value;
-		};
+		void			setInvite(std::string channel, bool stt);
+		void			setRemoveClient(bool value);
 		/*-------------------------------------------*/
-		bool			getRemoveClient() const
-		{
-			return (this->remove_client);
-		};
+		bool			isInvited(std::string channel);
+		void 			createInvite(std::string channel, bool state);
+		bool			getRemoveClient() const;
 		std::string	getAddress() const;
 		int			getClientfd() const;
 		std::string	getNickName() const;
@@ -50,7 +49,9 @@ class Client
 		std::string	getRealName() const;
 		std::string	getHostName() const;
 		bool		getRegistered() const;
-		bool		checkInvite() const;
+		std::map <std::string, bool> getInvites();
+
+
 
 	void sendMessage(const std::string& message) {
         std::string formatted_message = ":" + nickName + " " + message + "\r\n";

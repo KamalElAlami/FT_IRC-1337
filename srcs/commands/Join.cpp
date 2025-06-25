@@ -38,7 +38,7 @@ void    Server::createChannel(Client* client , std::string channelName, const st
     }
     if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() <= (int)(this->chanPool[chanIndex]->getMembers().size() + 1))
         return (sendToClient(client, "471 " + channelName + " :Cannot join channel (+l)"));
-    if (this->chanPool[chanIndex]->getInviteOnly() && !client->checkInvite())
+    if (this->chanPool[chanIndex]->getInviteOnly() && !client->isInvited(channelName))
         return (sendToClient(client, "473 " + channelName + " :Cannot join channel (+i)"));
     if (this->chanPool[chanIndex]->getEnabledPass())
     {
@@ -46,7 +46,7 @@ void    Server::createChannel(Client* client , std::string channelName, const st
             return (sendToClient(client, "475 " + channelName + " :Cannot join channel (+k)"));
     }
     if (this->chanPool[chanIndex]->getInviteOnly())
-        client->setInvite(false);
+        client->setInvite(channelName, false);
     this->chanPool[chanIndex]->getMembers().push_back(client);
     this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
     sendNamesRpl(client, channelName, chanIndex);
@@ -70,7 +70,7 @@ void    Server::createChannel(Client* client , std::string channelName, const st
     }
     if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() <= (int)(this->chanPool[chanIndex]->getMembers().size() + 1))
         return (sendToClient(client, "471 " + channelName + " :Cannot join channel (+l)"));
-    if (this->chanPool[chanIndex]->getInviteOnly() && !client->checkInvite())
+    if (this->chanPool[chanIndex]->getInviteOnly() && !client->isInvited(channelName))
         return (sendToClient(client, "473 " + channelName + " :Cannot join channel (+i)"));
     if (this->chanPool[chanIndex]->getEnabledPass())
     {
@@ -78,7 +78,7 @@ void    Server::createChannel(Client* client , std::string channelName, const st
             return (sendToClient(client, "475 " + channelName + " :Cannot join channel (+k)"));
     }
     if (this->chanPool[chanIndex]->getInviteOnly())
-        client->setInvite(false);
+        client->setInvite(channelName, false);
     this->chanPool[chanIndex]->getMembers().push_back(client);
     this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
     sendNamesRpl(client, channelName, chanIndex);

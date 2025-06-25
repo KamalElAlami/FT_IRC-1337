@@ -81,7 +81,6 @@ class Server
 		void broadcastInChannel(std::vector <Client *> members, std::string message, const Client &client);
 		void sendMsgToChannel(Client* client, std::vector <Client *> members, std::string message);
 		int findUser(std::string name, std::vector <Client*> clients);
-		//added by soufiix
 		Client* getBotInstance(void);
 		Channel *findChannel(const std::string &channelName) const;
 		int 	getclientfd(std::string clienName) const;
@@ -93,6 +92,7 @@ class Server
 		void 	handelkeymode(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel); 
 		void	setUserLimit(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel);
 		void	handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel);
+		void	removeChannelFromInvites(std::vector <Client*>	clients, std::string channel);
 		//-------------------------------
 
 };

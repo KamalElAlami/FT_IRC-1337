@@ -27,7 +27,7 @@ int		Server::handleInvite(Client *client, const std::vector<std::string> &params
     if (_channel->hasUser(new_clientFd))
         return(sendError(client->getClientfd(), "443", new_client->getNickName(), "is already on channel"),1);
 
-    new_client->setInvite(true);
+    new_client->createInvite(channelName, true);
     sendToClient(client, "341 " + client->getNickName() + " " + new_client->getNickName() + " " + channelName);
     std::string announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "INVITE " + new_client->getNickName() + " " + channelName;
     sendToClient(new_client, announce);
