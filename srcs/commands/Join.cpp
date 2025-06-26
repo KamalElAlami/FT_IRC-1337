@@ -23,7 +23,9 @@ void    Server::createChannel(Client* client , std::string channelName, const st
 {
     std::string announce;
     int chanIndex;
-
+    std::cout << channelName << channelName.size() << std::endl;
+    if (channelName.size() < 2 || channelName.find(' ') != std::string::npos)
+        return (sendToClient(client, "476 " + channelName + " : Bad Channel Mask"));
     announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     chanIndex = this->isChannelExist(channelName);
     if (chanIndex == -1)
@@ -49,13 +51,18 @@ void    Server::createChannel(Client* client , std::string channelName, const st
         client->setInvite(channelName, false);
     this->chanPool[chanIndex]->getMembers().push_back(client);
     this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
+    if (!this->chanPool[chanIndex]->getTopic().empty())
+        sendToClient(client, "332 "+ client->getNickName() + " " + channelName + " :" + this->chanPool[chanIndex]->getTopic());
     sendNamesRpl(client, channelName, chanIndex);
 }
+
 void    Server::createChannel(Client* client , std::string channelName, const std::vector<std::string>& params, std::string pass)
 {
     std::string announce;
     int chanIndex;
 
+    if (channelName.size() < 2 || channelName.find(' ') != std::string::npos)
+        return (sendToClient(client, "476 " + channelName + " : Bad Channel Mask"));
     announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     chanIndex = this->isChannelExist(channelName);
     if (chanIndex == -1)
@@ -100,7 +107,6 @@ int Server::handleJoin(Client* client, const std::vector<std::string>& params)
                 createChannel(client, canals[i], params);
             else
             {
-                std::cout << "sbiiika" << std::endl;
                 std::vector<std::string> pass = ft_split(params[1], ','); // split multiple passwords pass1,pass2,pass3
                 createChannel(client, canals[i], params, pass[i]);
             }

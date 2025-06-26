@@ -76,12 +76,12 @@ void run_single_client(int client_id, const std::string& host, int port, const s
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     // Quit
-    std::string quit_cmd = "QUIT :Stress test finished for bot " + std::to_string(client_id) + "\r\n";
-    send(sockfd, quit_cmd.c_str(), quit_cmd.length(), 0);
+    // std::string quit_cmd = "QUIT :Stress test finished for bot " + std::to_string(client_id) + "\r\n";
+    // send(sockfd, quit_cmd.c_str(), quit_cmd.length(), 0);
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    close(sockfd);
-    std::cout << "[Client " << client_id << "] Disconnected" << std::endl;
+    // std::this_thread::sleep_for(std::chrono::seconds(1));
+    // close(sockfd);
+    // std::cout << "[Client " << client_id << "] Disconnected" << std::endl;
 }
 
 int main(int argc, char* argv[]) {

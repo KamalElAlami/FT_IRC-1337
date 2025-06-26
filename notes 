@@ -6,7 +6,7 @@ if the user was invited already and kicked the invite flag will be 0 again [x]
 in join check for password and invite only [x]
 handle signals 
 prvmsg check if join [x]
-Relay
-skip empty channel names (join)
+skip empty channel names (join) []
+after join send topic rpl if no topic skip [x]
 00:38 -!- [ircserv] You're not an operator in that channel
-invite logic completely currupted create map key value for every channel in the server
+invite logic completely currupted create map key value for every channel in the server [x]
