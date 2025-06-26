@@ -24,8 +24,6 @@ void    Server::createChannel(Client* client , std::string channelName, const st
     std::string announce;
     int chanIndex;
     std::cout << channelName << channelName.size() << std::endl;
-    if (channelName.size() < 2 || channelName.find(' ') != std::string::npos)
-        return (sendToClient(client, "476 " + channelName + " : Bad Channel Mask"));
     announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     chanIndex = this->isChannelExist(channelName);
     if (chanIndex == -1)
@@ -36,7 +34,8 @@ void    Server::createChannel(Client* client , std::string channelName, const st
         chanIndex = this->chanPool.size() - 1;
 
         this->chanPool[chanIndex]->getMembers().push_back(client);
-        return (this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce));
+        this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
+        return (sendNamesRpl(client, channelName, chanIndex));
     }
     if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() <= (int)(this->chanPool[chanIndex]->getMembers().size() + 1))
         return (sendToClient(client, "471 " + channelName + " :Cannot join channel (+l)"));
@@ -61,8 +60,6 @@ void    Server::createChannel(Client* client , std::string channelName, const st
     std::string announce;
     int chanIndex;
 
-    if (channelName.size() < 2 || channelName.find(' ') != std::string::npos)
-        return (sendToClient(client, "476 " + channelName + " : Bad Channel Mask"));
     announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     chanIndex = this->isChannelExist(channelName);
     if (chanIndex == -1)

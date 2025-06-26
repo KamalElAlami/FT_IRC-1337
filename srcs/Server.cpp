@@ -55,9 +55,7 @@ void Server::Start_Server()
 		}
 		catch(const std::exception& e)
 		{
-			// this->ClearAll();
 			std::cerr << e.what() << std::endl;
-			// exit (1);
 		}
 	}
 }
