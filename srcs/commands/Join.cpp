@@ -70,7 +70,8 @@ void    Server::createChannel(Client* client , std::string channelName, const st
         chanIndex = this->chanPool.size() - 1;
 
         this->chanPool[chanIndex]->getMembers().push_back(client);
-        return (this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce));
+        this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
+        return (sendNamesRpl(client, channelName, chanIndex));
     }
     if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() <= (int)(this->chanPool[chanIndex]->getMembers().size() + 1))
         return (sendToClient(client, "471 " + channelName + " :Cannot join channel (+l)"));
