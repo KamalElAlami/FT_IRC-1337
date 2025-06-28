@@ -1,9 +1,12 @@
 #include "../includes/Server.hpp"
 #include <fcntl.h> 
 
-Server::Server(int _fd, int _Port) : SerSockFd(_fd), Port(_Port) {
+Server::Server(int _fd, int _Port) : SerSockFd(_fd), Port(_Port), agent(NULL) {
 }
-Server::~Server() {}
+Server::~Server()
+{
+	delete this->agent;
+}
 Server::Server(Server const & src)
 {
 	*this = src;
@@ -33,13 +36,12 @@ int	Server::get_Port() const {
 
 void Server::Start_Server()
 {
-	try {
-		this->Build_Server();
-		while (true)
-		{
+	this->Build_Server();
+	while (true)
+	{
+		try {
 			if (poll(this->polling.data(), this->polling.size(), -1) == -1)
-			throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
-			
+				throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
 			for (size_t i = 0; i < this->polling.size(); i++)
 			{
 				if (this->polling[i].revents & POLLIN)
@@ -51,12 +53,10 @@ void Server::Start_Server()
 				}
 			}
 		}
-	}
-	catch(const std::exception& e)
-	{
-		this->ClearAll();
-		std::cerr << e.what() << std::endl;
-		exit (1);
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << std::endl;
+		}
 	}
 }
 
@@ -125,4 +125,59 @@ void Server::ClearAll()
 		close(this->polling[i].fd);
 }
 
+//added by soufiix
+Channel *Server::findChannel(const std::string &channelName)const {
+	for (size_t i = 0; i < chanPool.size(); i++){
+		std::cout << "the given: \'"<< channelName << "\' in the server \'" << chanPool[i]->getName() << "\'" << std::endl;
+		if (channelName == chanPool[i]->getName()){
+			std::cout << "succes \n";
+			return chanPool[i];
+		}
+	}
+	std::cout << "failure to find channel\n";
+	return NULL;
+}
 
+int Server::getclientfd(std::string clienName)const {
+	for (size_t i = 0; i < clients.size(); i++){
+		if (clienName == clients[i]->getNickName())
+			return clients[i]->getClientfd();
+	}
+	return -1;
+}
+
+Client *Server::getClient(int clientFd)const {
+	for (size_t i = 0; i < clients.size(); i++){
+		if (clientFd == clients[i]->getClientfd())
+			return clients[i];
+	}
+	return NULL;
+}
+
+void Server::sendError(int clientfd, const std::string& errorCode, const std::string &target,const std::string& message) {
+    std::string errorMsg = ":ircserv " + errorCode + " " + target + " :" + message +"\r\n";
+    send(clientfd, errorMsg.c_str(), errorMsg.length(), 0);
+}
+
+Client* Server::getBotInstance(void) {
+    if (agent == NULL) 
+{
+        agent = new Client();
+        agent->setNickName("Sbiksla");
+        agent->setUserName("Sbiksla");
+        agent->setRealName("AI Assistant Bot");
+        agent->setRegistered(true);
+        agent->setClientfd(-1);
+        agent->setAddress("localhost");
+    }
+    return (agent);
+}
+
+void	Server::removeChannelFromInvites(std::vector <Client*>	clients, std::string channel)
+{
+	for (size_t i = 0; i < clients.size(); i++)
+	{
+		if (clients[i]->getInvites().count(channel)) //check
+			clients[i]->getInvites().erase(channel);
+	}
+}

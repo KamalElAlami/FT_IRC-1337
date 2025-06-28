@@ -4,10 +4,12 @@
 
 Channel::Channel(std::string n) : name(n)
 {
+    topic = "";
     inviteOnly = false;
-    restrictedTopic = false;
+    restrictedTopic = true;
     enabledPass = false;
     memberLimit = -1;
+    creationTime = std::time(0);
 }
 
 std::string& Channel::getName(void)
@@ -67,4 +69,72 @@ int Channel::deleteFromContainer(Client* client, std::vector <Client *>& Contain
 
     }
     return (0);
+}
+
+//added by soufiix
+
+void Channel::setEnabledPass(bool stt)
+{
+    enabledPass = stt;
+}
+
+bool Channel::hasUser(int _client_fd){
+    for (size_t i = 0; i < members.size(); i++){
+        if (_client_fd == members[i]->getClientfd())
+            return true;
+    }
+    return false;
+}
+
+std::string Channel::getTopicSetBy()const{
+    return this->topicSetBy;
+}
+
+time_t Channel::getTopicSetAt() const{
+    return this->topicSetAt;
+}
+
+time_t& Channel::getCreationTime() 
+{
+    return (creationTime);
+}
+
+bool Channel::isOperator(int client_fd)const {
+    for (size_t i = 0; i < ops.size(); i++){
+        if (client_fd == ops[i]->getClientfd())
+            return true;
+    }
+    return false;
+}
+
+void Channel::setTopic(std::string _topic){
+    this->topic = _topic;
+}
+
+void Channel::setTopicSetBy(std::string _client){
+    this->topicSetBy = _client;
+}
+
+void Channel::setTopicSetAt(time_t _time){
+    this->topicSetAt = _time;
+}
+
+void Channel::setCreationTime(time_t tt)
+{
+    creationTime = tt;
+}
+void Channel::setInviteOnly(bool status){
+    this->inviteOnly = status;
+}
+
+void Channel::setRestrictedTopic(bool status){
+    this->restrictedTopic = status;
+}
+
+void Channel::setPassword(std::string key){
+    this->Password = key;
+}
+
+void Channel::setMemberLimit(int n){
+    this->memberLimit = n;
 }

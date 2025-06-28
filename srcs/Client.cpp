@@ -43,8 +43,39 @@ void Client::setRealName(std::string value) {
 void Client::setHostName(std::string value) {
 	this->hostName = value;
 }
+void Client::setInvite(std::string channel, bool stt){
+
+	invites[channel] = stt;
+}
+
+void Client::setRemoveClient(bool value)
+{
+	this->remove_client = value;
+}
+
+void Client::createInvite(std::string channel, bool state)
+{
+	invites.insert(std::make_pair(channel, state));
+}
 bool Client::getRegistered() const {
 	return (this->registered);
+}
+
+bool Client::isInvited(std::string channel)
+{
+	bool state;
+	try{
+		state = invites.at(channel);
+		return (state);
+	}
+	catch (const std::out_of_range& e)
+	{
+		return (false);
+	}
+}
+bool Client::getRemoveClient() const
+{
+	return (this->remove_client);
 }
 int Client::getClientfd() const {
 	return (this->Clientfd);
@@ -73,4 +104,9 @@ std::string Client::getRealName() const {
 std::string Client::getHostName() const {
 	return (this->hostName);
 
+}
+
+std::map <std::string, bool> Client::getInvites()
+{
+	return (invites);
 }

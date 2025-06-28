@@ -4,7 +4,7 @@ AiAgent::AiAgent()
 {
     // envFile.open(".env");
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-    junkFile = "/tmp/response";
+    junkFile = "response";
     // getline(envFile, api_key);
 }
 
@@ -15,8 +15,10 @@ AiAgent::~AiAgent()
 
 void AiAgent::setApi(std::string api)
 {
-    api_key = api;
+    this->api_key = api;
 }
+
+
 std::string AiAgent::parseResponse(void)
 {
     std::string buffer;
@@ -45,9 +47,12 @@ std::string AiAgent::parseResponse(void)
 
 std::string AiAgent::startAgent(std::string prompt)
 {
+    if (api_key.empty())
+        throw std::runtime_error("API key is not set. Please set it using setApi() method.\n");
     std::string response;
-    std::string payload = "{\"contents\":[{\"parts\":[{\"text\":\"" + prompt + "\"}]}]}";
-    std::string exec = "curl -s -X POST \"" + url + "?key=" + api_key + "\" -H \"Content-Type: application/json\" -d '" + payload + "'" + " > " + junkFile;
+    std::string instruction = "you are a helpful assistant named sbiksla in a irc server you keep you answers short as you can keep it funny a bit you can add some emogies to your answers : ";
+    std::string payload = "{\"contents\":[{\"parts\":[{\"text\":\"" + instruction + prompt + "\"}]}]}";
+    std::string exec = "curl -s -X POST \"" + url + "?key=" + api_key + "\" -H \"Content-Type: application/json\" -d '" +  payload + "'" + " > " + junkFile;
     system(exec.c_str());
     try {
         response = parseResponse();
@@ -62,17 +67,3 @@ std::string AiAgent::startAgent(std::string prompt)
 
 
 
-// int main()
-// {
-//     std::string api_key = "AIzaSyCCXUW015gm08ac2YuWxu-SXjCC980u1t4";
-//     std::string url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-//     std::string msg = "explain linear regression";
-//     std::string json = "{\"contents\":[{\"parts\":[{\"text\":\"" + msg + "\"}]}]}";
-
-//     // 2. Build curl command
-//     std::string cmd = "curl -s -X POST \"" + url + "?key=" + api_key + "\" -H \"Content-Type: application/json\" -d '" + json + "'" + ">> reponse";
-
-//     // 3. Execute command
-//     system(cmd.c_str());
-
-// }

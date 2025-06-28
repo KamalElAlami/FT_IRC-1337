@@ -32,7 +32,9 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
-
+	std::cout << Command << std::endl;
+	for (size_t i = 0; i < params.size(); i++)
+		std::cout << params[i] << std::endl;
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -49,12 +51,17 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handlePrivMsg(client, params);
 	else if (Command == "PART")
 		this->handlePart(client, params);
-	// else if (Command == "SBIKSLA")
-	// 	this->handleSbiksla(client, params);
-	//else if (Command == "MODE")
-	//	this->handleMode(client, params);	
-	// else if (Command == "TOPIC")
-	// 	this->handleTopic(client, params);
+	else if (Command == "SBIKSLA")
+		this->handleSbiksla(client, params);
+	else if (Command == "MODE")
+		this->handleMode(client, params);	
+	else if (Command == "TOPIC")
+		this->handleTopic(client, params);
+	else if(Command == "INVITE")
+		this->handleInvite(client, params);
+	else if (Command == "KICK")
+		this->handleKick(client, params);
+
 }
 
 void Server::checkRegistration(Client* client)

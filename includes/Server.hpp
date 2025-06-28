@@ -17,14 +17,18 @@
 #include "Channels.hpp"
 #include "chat.hpp"
 #include <fstream>
+#include <sstream>
+#include <ctime>
+#include <algorithm>
 
 
 class Server
 {
 	private:
-		int							SerSockFd;
-		int							Port;
+		int								SerSockFd;
+		int								Port;
 		static bool						signals;
+		Client							*agent;
 		std::string						Password;
 		std::vector <Client*>			clients;
 		std::vector <struct pollfd>		polling;
@@ -57,26 +61,43 @@ class Server
 		int		handleCap(Client* client, const std::vector<std::string>& params);
 		int		handlePingPong(Client* client, const std::vector<std::string>& params);
 		int		handlePrivMsg(Client* client, const std::vector<std::string>& params);
-		// int		handleTopic(Client* client, const std::vector<std::string>& params);
 		int		handlePart(Client* client, const std::vector<std::string>& params);
+		int		partUserByUser(Client* client, std::string channel, const std::vector<std::string>& params);
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
 		int		handleMode(Client* client, const std::vector<std::string>& params);
 		int		handleSbiksla(Client* client, const std::vector<std::string>& params);
-		void	createChannel(Client* client, std::string channelName);
+		void	createChannel(Client* client, std::string channelName, const std::vector<std::string>& params);
+		void    createChannel(Client* client , std::string channelName, const std::vector<std::string>& params, std::string pass);
+		void	sendNamesRpl(Client* client, std::string channelName, int chanIndex);
+		void	displayModes(Client* client, Channel* channel);
 		void	removeClient(int ClientFd);
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
-		void    createBot(void);
 		void	ClearAll();
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);
 		int isChannelExist(std::string chanName);
 		void broadcastInChannel(std::vector <Client *> members, std::string message);
+		void broadcastInChannel(std::vector <Client *> members, std::string message, const Client &client);
 		void sendMsgToChannel(Client* client, std::vector <Client *> members, std::string message);
 		int findUser(std::string name, std::vector <Client*> clients);
+		Client* getBotInstance(void);
+		Channel *findChannel(const std::string &channelName) const;
+		int 	getclientfd(std::string clienName) const;
+		Client *getClient(int clientFd) const;
+		int		handleTopic(Client* client, const std::vector<std::string>& params);
+		int		handleInvite(Client *client, const std::vector<std::string> &params);
+		int 	handleKick(Client* client, const std::vector<std::string>& params);
+		void 	sendError(int clientfd, const std::string& errorCode, const std::string &target, const std::string& message);
+		void 	handelkeymode(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel); 
+		void	setUserLimit(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel);
+		void	handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel);
+		void	removeChannelFromInvites(std::vector <Client*>	clients, std::string channel);
+		//-------------------------------
 
 };
 
-size_t numberOfParameterizedArgs(std::string arg);
+std::vector<std::string> ft_split(std::string str, char c);
+
 
 #endif

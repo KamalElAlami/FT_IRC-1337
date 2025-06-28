@@ -5,8 +5,6 @@
 #include <vector>
 
 
-
-
 class AiAgent
 {
     private :
