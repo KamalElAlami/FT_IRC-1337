@@ -27,5 +27,13 @@ int main (int ac, char **av)
 		return (std::cerr << "Error: Port out of range < from 6665 to 6665 >" << std::endl, 1);
 	Server server(-1, atoi(av[1]));
 	server.set_Password(av[2]);
-	server.Start_Server();	
+	try
+	{
+		server.Start_Server();	
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+		//return ;
+	}
 }

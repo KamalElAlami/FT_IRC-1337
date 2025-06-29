@@ -36,10 +36,19 @@ int	Server::get_Port() const {
 
 void Server::Start_Server()
 {
-	this->Build_Server();
+	//try
+	//{
+		this->Build_Server();
+	//}
+	//catch(const std::exception& e)
+	//{
+	//	std::cerr << e.what() << '\n';
+	//	return ;
+	//}
+	
 	while (true)
 	{
-		try {
+		//try {
 			if (poll(this->polling.data(), this->polling.size(), -1) == -1)
 				throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
 			for (size_t i = 0; i < this->polling.size(); i++)
@@ -52,11 +61,12 @@ void Server::Start_Server()
 						this->handleClientMessage(this->polling[i].fd);
 				}
 			}
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << std::endl;
-		}
+		//}
+		//catch(const std::exception& e)
+		//{
+		//	std::cerr << e.what() << std::endl;
+		//	return ;
+		//}
 	}
 }
 
