@@ -73,50 +73,6 @@ void Server::handleClientMessage(int clientFd)
 	}
 }
 
-
-
-
-
-
-
-
-//void Server::handleClientMessage(int clientFd)
-//{
-//	int				BytesRead;
-//	char			buffer[1024];
-//	size_t			pos = 0;
-//	Client			*client;
-//	std::string		line;
-
-//	for (size_t i = 0; i < this->clients.size(); i++)
-//	{
-//		if (this->clients[i]->getClientfd() == clientFd)
-//		{
-//			client = this->clients[i];
-//			break;
-//		}
-//	}
-
-//	memset(buffer, 0, 1024);
-//	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
-//	//std::cout << "Buffer : " << buffer << std::endl;
-//	if (BytesRead == 0)
-//		this->handleClientDisconnect(clientFd);
-//	else if (BytesRead < 0)
-//		throw std::runtime_error( "Error: Failed to receive data from socket using recv()");
-
-//	buffer[BytesRead] = '\0';
-//	std::string		message(buffer);
-//	//std::cout << "Before: Message : " << message << ", line : " << line << std::endl;
-//	while ((pos = message.find("\r\n")) != std::string::npos && client)
-//	{
-//		line = message.substr(0, pos);
-//		message.erase(0, pos + 2);
-//		if (!line.empty())
-//			this->ParseCommand(client, line);
-//	}
-//}
-
 void	Server::removeClient(int clientFd)
 {
 	for (size_t i = 0; i < this->clients.size(); i++)

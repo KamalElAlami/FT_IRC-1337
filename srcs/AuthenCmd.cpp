@@ -73,8 +73,7 @@ void Server::checkRegistration(Client* client)
 	{
 		client->setRegistered(true);
 		this->sendToClient(client, "****************************************************");
-		this->sendToClient(client, "001 " + client->getNickName() + 
-			" :Welcome to the Internet Relay Network " + 
+		this->sendToClient(client, "001 " + client->getNickName() + " :Welcome to the Internet Relay Network " + 
 			client->getNickName() + "!" + client->getUserName() + "@" + 
 			client->getHostName());
 		this->sendToClient(client, "002 " + client->getNickName() + 
