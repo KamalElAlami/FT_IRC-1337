@@ -21,10 +21,11 @@ class Client
 		std::string	realName;
 		std::string	hostName;
 		std::string	address;
+		std::string	Buffer;
+
 	public:
 		Client();
 		Client(Client const & src);
-		//std::string getNick() const;
 		~Client();
 		/*-------------------------------------------*/
 		void			setClientfd(int value);
@@ -50,6 +51,10 @@ class Client
 		std::string	getHostName() const;
 		bool		getRegistered() const;
 		std::map <std::string, bool> getInvites();
+		/*------------------------------------------- oussama*/
+		void setBuffer(std::string value);
+		std::string getBuffer();
+		void CustomBuffer();
 
 
 

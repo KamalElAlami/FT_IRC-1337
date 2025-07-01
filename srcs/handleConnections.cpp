@@ -20,42 +20,102 @@ void Server::handleNewConnection()
 	this->polling.push_back(client_pollfd);
 }
 
-void Server::handleClientMessage(int clientFd)
-{
-	int				BytesRead;
-	char			buffer[1024];
-	size_t			pos = 0;
-	Client			*client;
-	std::string		line;
 
+Client * Server::getClient(int clientfd)
+{
 	for (size_t i = 0; i < this->clients.size(); i++)
 	{
-		if (this->clients[i]->getClientfd() == clientFd)
-		{
-			client = this->clients[i];
-			break;
-		}
+		if (this->clients[i]->getClientfd() == clientfd)
+			return (this->clients[i]);
 	}
+	return (NULL);
+}
 
-	memset(buffer, 0, 1024);
-	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
-	//std::cout << "Buffer : " << buffer << std::endl;
-	if (BytesRead == 0)
-		this->handleClientDisconnect(clientFd);
-	else if (BytesRead < 0)
-		throw std::runtime_error( "Error: Failed to receive data from socket using recv()");
+std::string Server::EraseLine(std::string & src, int pos)
+{
+	std::string res = "";
 
-	buffer[BytesRead] = '\0';
-	std::string		message(buffer);
-	//std::cout << "Before: Message : " << message << ", line : " << line << std::endl;
-	while ((pos = message.find("\r\n")) != std::string::npos && client)
+	if (src.find("\r\n") != std::string::npos)
 	{
-		line = message.substr(0, pos);
-		message.erase(0, pos + 2);
+		pos--;
+		res = src.substr(0, pos);
+		src.erase(0, pos + 2);
+	}
+	else if (src.find("\n") != std::string::npos)
+	{
+		res = src.substr(0, pos);
+		src.erase(0, pos + 1);
+	}
+	return res;
+}
+
+void Server::handleClientMessage(int clientFd)
+{
+	std::string	line;
+	std::string	data;
+	size_t		position;
+	Client		*client;
+
+	client = getClient(clientFd);
+	client->CustomBuffer();
+	if (client->getRemoveClient() == true)
+	{
+		this->handleClientDisconnect(clientFd);
+		return ;
+	}
+	data = client->getBuffer();
+	while ((position = data.find("\n")) != std::string::npos && client)
+	{
+		line = EraseLine(data, position);
+		client->setBuffer(data);
 		if (!line.empty())
 			this->ParseCommand(client, line);
 	}
 }
+
+
+
+
+
+
+
+
+//void Server::handleClientMessage(int clientFd)
+//{
+//	int				BytesRead;
+//	char			buffer[1024];
+//	size_t			pos = 0;
+//	Client			*client;
+//	std::string		line;
+
+//	for (size_t i = 0; i < this->clients.size(); i++)
+//	{
+//		if (this->clients[i]->getClientfd() == clientFd)
+//		{
+//			client = this->clients[i];
+//			break;
+//		}
+//	}
+
+//	memset(buffer, 0, 1024);
+//	BytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
+//	//std::cout << "Buffer : " << buffer << std::endl;
+//	if (BytesRead == 0)
+//		this->handleClientDisconnect(clientFd);
+//	else if (BytesRead < 0)
+//		throw std::runtime_error( "Error: Failed to receive data from socket using recv()");
+
+//	buffer[BytesRead] = '\0';
+//	std::string		message(buffer);
+//	//std::cout << "Before: Message : " << message << ", line : " << line << std::endl;
+//	while ((pos = message.find("\r\n")) != std::string::npos && client)
+//	{
+//		line = message.substr(0, pos);
+//		message.erase(0, pos + 2);
+//		if (!line.empty())
+//			this->ParseCommand(client, line);
+//	}
+//}
 
 void	Server::removeClient(int clientFd)
 {

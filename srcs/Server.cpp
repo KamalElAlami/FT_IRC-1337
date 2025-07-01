@@ -36,37 +36,21 @@ int	Server::get_Port() const {
 
 void Server::Start_Server()
 {
-	//try
-	//{
-		this->Build_Server();
-	//}
-	//catch(const std::exception& e)
-	//{
-	//	std::cerr << e.what() << '\n';
-	//	return ;
-	//}
-	
-	while (true)
+	this->Build_Server();
+	while (Server::signals == false)
 	{
-		//try {
-			if (poll(this->polling.data(), this->polling.size(), -1) == -1)
-				throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
-			for (size_t i = 0; i < this->polling.size(); i++)
+		if (poll(this->polling.data(), this->polling.size(), -1) == -1)
+			throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
+		for (size_t i = 0; i < this->polling.size(); i++)
+		{
+			if (this->polling[i].revents & POLLIN)
 			{
-				if (this->polling[i].revents & POLLIN)
-				{
-					if(this->polling[i].fd == this->SerSockFd)
-						this->handleNewConnection();
-					else
-						this->handleClientMessage(this->polling[i].fd);
-				}
+				if(this->polling[i].fd == this->SerSockFd)
+					this->handleNewConnection();
+				else
+					this->handleClientMessage(this->polling[i].fd);
 			}
-		//}
-		//catch(const std::exception& e)
-		//{
-		//	std::cerr << e.what() << std::endl;
-		//	return ;
-		//}
+		}
 	}
 }
 

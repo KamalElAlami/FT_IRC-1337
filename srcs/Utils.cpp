@@ -1,6 +1,8 @@
 #include "../includes/Server.hpp"
 #include "../includes/Channels.hpp"
 
+bool Server::signals = false;
+
 int Server::isChannelExist(std::string chanName)
 {
     if (chanPool.empty())
@@ -69,15 +71,6 @@ std::vector<std::string> ft_split(std::string str, char c)
     return (words);
 }
 
-// size_t numberOfParameterizedArgs(std::string arg)
-// {
-//     size_t count = 0;
-//     for (int i = 0; arg.c_str()[i]; i++)
-//         if ((arg.c_str()[i] == 'o') || (arg.c_str()[i] == 'k') || (arg.c_str()[i] == 'l'))
-//             count += 1;
-//     return (count);
-// }
-
 void Server::sendToClient(Client* client, const std::string& message)
 {
     std::string fullMessage = message;
@@ -88,3 +81,11 @@ void Server::sendToClient(Client* client, const std::string& message)
 	send(client->getClientfd(), fullMessage.c_str(), fullMessage.length(), 0);
 }
 
+void Server::SigHandler(int value)
+{
+	(void) value;
+	std::cout << "\n*------------------* Ircserv has ben closed *------------------*" << std::endl;
+	Server::signals = true;
+	//clean all resurses here;
+	exit (0);
+}

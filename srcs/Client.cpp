@@ -110,3 +110,34 @@ std::map <std::string, bool> Client::getInvites()
 {
 	return (invites);
 }
+
+void Client::setBuffer(std::string value)
+{
+	this->Buffer = value;
+}
+
+void Client::CustomBuffer()
+{
+	ssize_t		Read;
+	char			buf[1024];
+
+	while (this->Buffer.find("\n") == std::string::npos)
+	{
+		memset(buf, 0, 1024);
+		Read = recv(this->Clientfd, buf, sizeof(buf) -1, MSG_DONTWAIT);
+		if (Read <= 0)
+		{
+			if (Read == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+				break;
+			else {
+				this->remove_client = true;
+				return ;
+			}
+		}
+		this->Buffer += buf;
+	}
+}
+
+std::string Client::getBuffer() {
+	return (Buffer);
+}

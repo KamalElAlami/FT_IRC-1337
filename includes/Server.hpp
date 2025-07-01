@@ -74,6 +74,9 @@ class Server
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
 		void	ClearAll();
+		static void SigHandler(int value);
+		Client * getClient(int clientfd);
+		std::string EraseLine(std::string & src, int pos);
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);
 		int isChannelExist(std::string chanName);

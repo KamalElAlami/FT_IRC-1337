@@ -20,20 +20,22 @@ int main (int ac, char **av)
 {
 	int		Port_val;
 
-	if (ac != 3 || Pars_inputs(av[1], av[2]))
-		return (std::cerr << "Usage: " << "<port>" << " <pass>" << std::endl, 1);
-	Port_val = atoi(av[1]);
-	if (Port_val < 6665 || Port_val > 6669)
-		return (std::cerr << "Error: Port out of range < from 6665 to 6665 >" << std::endl, 1);
-	Server server(-1, atoi(av[1]));
-	server.set_Password(av[2]);
 	try
 	{
-		server.Start_Server();	
+		signal(SIGINT, Server::SigHandler);
+		signal(SIGQUIT, Server::SigHandler);
+		signal(SIGPIPE, SIG_IGN);
+		if (ac != 3 || Pars_inputs(av[1], av[2]))
+			return (std::cerr << "Usage: " << "<port>" << " <pass>" << std::endl, 1);
+		Port_val = atoi(av[1]);
+		if (Port_val < 6665 || Port_val > 6669)
+			return (std::cerr << "Error: Port out of range < from 6665 to 6665 >" << std::endl, 1);
+		Server server(-1, atoi(av[1]));
+		server.set_Password(av[2]);
+		server.Start_Server();
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << '\n';
-		//return ;
 	}
 }
