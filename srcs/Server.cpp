@@ -122,13 +122,9 @@ void Server::ClearAll()
 //added by soufiix
 Channel *Server::findChannel(const std::string &channelName)const {
 	for (size_t i = 0; i < chanPool.size(); i++){
-		std::cout << "the given: \'"<< channelName << "\' in the server \'" << chanPool[i]->getName() << "\'" << std::endl;
-		if (channelName == chanPool[i]->getName()){
-			std::cout << "succes \n";
+		if (channelName == chanPool[i]->getName())
 			return chanPool[i];
-		}
 	}
-	std::cout << "failure to find channel\n";
 	return NULL;
 }
 

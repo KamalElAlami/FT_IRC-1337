@@ -30,7 +30,10 @@ int 	Server::handleKick(Client* client, const std::vector<std::string>& params)
             continue;
         }
             
-            
+        if (new_clientFd == client->getClientfd()){
+            sendError(new_clientFd, "482", _channel->getName(), "You can't kick yourself");
+            continue;
+        }
         Client *new_client = getClient(new_clientFd);
             
         if (!_channel->hasUser(new_clientFd)){
