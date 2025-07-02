@@ -1,5 +1,5 @@
 #include "../includes/Client.hpp"
-
+#include <cstring>
 Client::Client()
 {
     this->registered = false;
@@ -127,7 +127,7 @@ void Client::CustomBuffer()
 		Read = recv(this->Clientfd, buf, sizeof(buf) -1, MSG_DONTWAIT);
 		if (Read <= 0)
 		{
-			if (Read == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+			if (Read == -1)
 				break;
 			else {
 				this->remove_client = true;

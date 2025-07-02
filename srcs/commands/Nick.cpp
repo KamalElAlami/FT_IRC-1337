@@ -3,11 +3,14 @@
 int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 {
 	bool valid = true;
-	std::string nickname = params[0];
 	std::string announce;
-
-	if(params.empty() || client->getPassword().empty() || client->getRemoveClient() == true)
+	std::string nickname;
+	
+	if(params.empty())
+		return (this->sendToClient(client, "461 : Not enough parameters"),1);
+	if(client->getPassword().empty() || client->getRemoveClient() == true)
 		return (client->setRemoveClient(true),1);
+	nickname = params[0];
 	if (nickname.empty())
 		valid = false;
 	for (size_t i = 0; i < nickname.length() && valid == true; i++) {

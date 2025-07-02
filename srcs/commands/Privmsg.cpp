@@ -8,6 +8,8 @@ int Server::handlePrivMsg(Client* client, const std::vector<std::string>& params
 
 	if (params.size() != 2)
 		return ( this->sendToClient(client, "461 :Not enough parameters"), 1);
+	if (params[1].empty() || (params[1].size() == 1 && params[1][0] == ':') )
+		return (1);
 	message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost PRIVMSG " + params[0] + " :" + params[1] + "\r\n";
 	if (params[0][0] == '#')
 	{

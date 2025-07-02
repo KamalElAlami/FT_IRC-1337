@@ -20,6 +20,7 @@
 #include <sstream>
 #include <ctime>
 #include <algorithm>
+#include <cstring>
 
 
 class Server
