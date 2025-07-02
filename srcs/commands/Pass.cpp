@@ -11,5 +11,8 @@ int Server::handlePass(Client* client, const std::vector<std::string>& params)
 	if (params[0] != this->Password)
 		return (this->sendToClient(client, "464 : Password incorrect"), 1);
 
-	return (client->setPassword(params[0]), 0);
+	client->setPassword(params[0]);
+	// this->checkRegistration(client);
+
+	return (0);
 }

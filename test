@@ -5,7 +5,7 @@ USER a a a a
 NICK aaa
 :!a@localhost NICK aaa
 -------------------------------------------------------
-fix nick name 
+fix nick name
 -------------------------------
 fix no such channel instead of no such nick reply
 ------------------------------------------------------
