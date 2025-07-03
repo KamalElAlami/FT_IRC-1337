@@ -7,7 +7,7 @@ int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 	std::string nickname;
 	
 	if(params.empty())
-		return (this->sendToClient(client, "461 : Not enough parameters"),1);
+		return (this->sendToClient(client, "461 : Not enough parameters"), client->setRemoveClient(true),1);
 	
 	
 	if(client->getPassword().empty() || client->getRemoveClient() == true)
@@ -39,8 +39,5 @@ int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 	}
 	
 	client->setNickName(nickname);
-
-	// this->checkRegistration(client);
-
 	return (0);
 }
