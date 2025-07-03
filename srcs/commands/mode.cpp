@@ -49,30 +49,50 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
     
     std::string modestring = params[1];
     bool mode = true;
+    bool status = false;
     size_t argindex = 2;
+    std::string modechar;
     
     for (size_t i = 0; i < modestring.size(); i++){
-        if (modestring[i] == 'i')
+        if (modestring[i] == 'i'){
             _channel->setInviteOnly(mode);
-        else if (modestring[i] == 't')
+            status = true;
+        }
+        else if (modestring[i] == 't'){
             _channel->setRestrictedTopic(mode);
+            status = true;
+        }
         else if (modestring[i] == 'k')
-            handelkeymode(client, params, argindex, mode, *_channel);
+            handelkeymode(client, params, argindex, mode, *_channel, status);
         else if (modestring[i] == 'l')
-            setUserLimit(client, params, argindex, mode, *_channel);
+            setUserLimit(client, params, argindex, mode, *_channel, status);
         else if (modestring[i] == 'o')
-            handelChannelOperator(client, params, argindex, mode, *_channel);
+            handelChannelOperator(client, params, argindex, mode, *_channel, status);
         else if (modestring[i] == '-')
             mode = false;
         else if (modestring[i] == '+')
             mode = true;
+        else{
+            modechar += modestring[i];
+            std::cout << "the mode is " << modechar << std::endl;
+            sendError(client->getClientfd(), "472",client->getNickName() + " " + modechar, ":is unknown mode char to me");
+            modechar.erase();
+        }
+        if(status){
+            std::string announce = ":" + client->getNickName() + "!" + "localhost MODE "
+             + channelName + " " + (mode ? "+" : "-") + modestring[i];
+            if(modestring[i] == 'o' || (mode && modestring[i] == 'l') || (mode && modestring[i] == 'k'))
+                announce += " " + params[argindex - 1];
+            std::cout << announce << std::endl;
+            broadcastInChannel(_channel->getMembers(), announce);
+            status = false;
+        }
     }
-    std::cout << mode << std::endl;
-    
+
     return (0);
 }
 
-void Server::handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel){
+void Server::handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status){
     if (params.size() <= argindex){
         sendError(client->getClientfd(), "461", "MODE +o", "Not enough parameters");
         return;
@@ -105,9 +125,15 @@ void Server::handelChannelOperator(Client *client, const std::vector<std::string
             argindex++;
             return;
         }
+        if (target_fd == client->getClientfd()){
+            sendError(target_fd, "482", _channel.getName(), "You can't remove your own operator status");
+            argindex++;
+            return;
+        }
         _channel.deleteFromContainer(target,_channel.getOperators());
     }
     argindex++;
+    status = true;
 }
 
 bool isValidNumber(std::string n){
@@ -118,7 +144,7 @@ bool isValidNumber(std::string n){
     return true;
 }
 
-void Server::setUserLimit(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel){
+void Server::setUserLimit(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status){
     if (mode){
         if (params.size() <= argindex){
             sendError(client->getClientfd(), "461", "MODE +l", "Not enough parameters");
@@ -136,10 +162,10 @@ void Server::setUserLimit(Client *client, const std::vector<std::string>&params,
     else{
         _channel.setMemberLimit(-1);
     }
-    std::cout << "user limits: " << _channel.getMemberLimit() << std::endl;
+    status = true;
 }
 
-void Server::handelkeymode(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel){
+void Server::handelkeymode(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status){
     if (mode){
         if (params.size() <= argindex){
             sendError(client->getClientfd(), "461", "MODE +k", "Not enough parameters");
@@ -156,6 +182,6 @@ void Server::handelkeymode(Client *client, const std::vector<std::string>&params
         _channel.setPassword("");
         _channel.setEnabledPass(false);
     }
+    status = true;
     std::cout << "channel key: " << _channel.getPassword() << std::endl;
-
 }

@@ -94,9 +94,9 @@ class Server
 		int		handleInvite(Client *client, const std::vector<std::string> &params);
 		int 	handleKick(Client* client, const std::vector<std::string>& params);
 		void 	sendError(int clientfd, const std::string& errorCode, const std::string &target, const std::string& message);
-		void 	handelkeymode(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel); 
-		void	setUserLimit(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel);
-		void	handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel);
+		void 	handelkeymode(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status); 
+		void	setUserLimit(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status);
+		void	handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status);
 		void	removeChannelFromInvites(std::vector <Client*>	clients, std::string channel);
 		//-------------------------------
 

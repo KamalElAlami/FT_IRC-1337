@@ -1,35 +1,42 @@
 #include "./includes/Server.hpp"
 
+
 int	 Pars_inputs(std::string Port, std::string Pass)
 {
+	double _port;
 	
-	if (Port.empty() || Pass.empty() || Pass.length() > 16 || Pass.length() < 4)
-		return (1);
+	if (Pass.length() > 512 || Pass.length() < 4)
+		return (std::cerr << "Error: Password length must be between 4 and 512 characters!" << std::endl, 1);
+	
+	if (Port.empty() || Pass.empty())
+		return (std::cerr << "Error: An argument is missing or empty!" << std::endl, 1);
 	
 	for (size_t i = 0; i < Port.length(); i++)
-	if (!std::isdigit(Port[i]))
-		return (1);
-	
+		if (!std::isdigit(Port[i]))
+			return (std::cerr << "Error : Port: Non printable or invalide Ascii " << std::endl, 1);
+			
 	for (size_t i = 0; i < Pass.length(); i++)
-	if (!std::isprint(Pass[i]) || Pass[i] == 32 || Pass[i]  == '\t')
-		return (1);
+		if (!std::isprint(Pass[i]) || Pass[i] == 32 || Pass[i]  == '\t')
+			return (std::cerr << "Error : PASS: Non printable or invalide Ascii " << std::endl, 1);
+	
+	_port = std::atof(Port.c_str());
+	if (_port < 1024 || _port > 65536)
+		return (std::cerr << "Error: Port: out of range < from 1024 to 65536 >" << std::endl, 1);
 	return (0);
 }
 
 int main (int ac, char **av)
 {
-	int		Port_val;
+	if (ac != 3)
+		return (std::cerr << "Error: An argument is missing or empty!" << std::endl, 1);
 
 	try
 	{
 		signal(SIGINT, Server::SigHandler);
 		signal(SIGQUIT, Server::SigHandler);
 		signal(SIGPIPE, SIG_IGN);
-		if (ac != 3 || Pars_inputs(av[1], av[2]))
-			return (std::cerr << "Usage: " << "<port>" << " <pass>" << std::endl, 1);
-		Port_val = atoi(av[1]);
-		if (Port_val < 6665 || Port_val > 6669)
-			return (std::cerr << "Error: Port out of range < from 6665 to 6665 >" << std::endl, 1);
+		if (Pars_inputs(av[1], av[2]))
+			return (1);
 		Server server(-1, atoi(av[1]));
 		server.set_Password(av[2]);
 		server.Start_Server();
