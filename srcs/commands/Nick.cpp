@@ -2,7 +2,6 @@
 
 int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 {
-	// bool valid = true;
 	std::string announce;
 	std::string nickname;
 	
@@ -10,12 +9,12 @@ int		Server::handleNick(Client* client, const std::vector<std::string>& params)
 		return (client->setRemoveClient(true),1);
 	
 	if(params.empty())
-		return (this->sendToClient(client, "461 : Not enough parameters"), client->setRemoveClient(true),1);
+		return (this->sendToClient(client, "431 : No nickname given"), client->setRemoveClient(true),1);
 	
 	nickname = params[0];
 	
 	for (size_t i = 0; i < nickname.length(); i++) {
-		if (!isprint(nickname[i]))
+		if (!isprint(nickname[i]) || (!isalnum(nickname[i]) && nickname[i] != '-') || isdigit(nickname[0]))
 			return (this->sendToClient(client, "432 : Erroneous nickname"), client->setRemoveClient(true), 1);
 	}
 
