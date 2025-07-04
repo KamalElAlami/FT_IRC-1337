@@ -78,8 +78,11 @@ void Server::handleClientMessage(int clientFd)
 		client->setBuffer(data);
 		if (!line.empty())
 			this->ParseCommand(client, line);
+		if (client->getRemoveClient() == true) {
+			this->handleClientDisconnect(clientFd);
+			return ;
+		}
 	}
-
 }
 
 void	Server::removeClient(int clientFd)

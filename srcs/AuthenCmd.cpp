@@ -32,9 +32,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
-	std::cout << Command << std::endl;
-	for (size_t i = 0; i < params.size(); i++)
-		std::cout << params[i] << std::endl;
+	// std::cout << "===========\n" << Command << "\n============  params size : " << params.size() << "\n============" <<std::endl;
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -42,7 +40,10 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	else if (Command == "NICK")
 		this->handleNick(client, params);
 	else if (Command == "USER")
+	{
 		this->handleUser(client, params);
+		// this->checkRegistration(client);
+	}
 	else if (Command == "PING")
 		this->handlePingPong(client, params);
 	else if (Command == "JOIN")
@@ -63,7 +64,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handleKick(client, params);
 	else if (Command == "QUIT")
 		this->handelQuit(client, params);
-	else
+	else if (Command != "WHO")
 		this->sendToClient(client, "421 " + Command + " :Unknown command");
 }
 

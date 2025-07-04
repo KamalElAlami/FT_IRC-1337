@@ -28,9 +28,6 @@ void Server::displayModes(Client* client, Channel* channel)
 
 int		Server::handleMode(Client* client, const std::vector<std::string>& params)
 {
-    for(size_t i = 0; i < params.size(); i++){
-        std::cout << "params de " << i << "is :" << params[i] << std::endl;
-    }
     if (params.size() < 1)
         return (sendError(client->getClientfd(), "461", "MODE" ,"Not enough parameters"), 1);
     if (params[0][0] != '#')
@@ -83,7 +80,6 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
              + channelName + " " + (mode ? "+" : "-") + modestring[i];
             if(modestring[i] == 'o' || (mode && modestring[i] == 'l') || (mode && modestring[i] == 'k'))
                 announce += " " + params[argindex - 1];
-            std::cout << announce << std::endl;
             broadcastInChannel(_channel->getMembers(), announce);
             status = false;
         }
@@ -183,5 +179,4 @@ void Server::handelkeymode(Client *client, const std::vector<std::string>&params
         _channel.setEnabledPass(false);
     }
     status = true;
-    std::cout << "channel key: " << _channel.getPassword() << std::endl;
 }

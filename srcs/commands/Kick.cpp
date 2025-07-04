@@ -2,8 +2,6 @@
 
 int 	Server::handleKick(Client* client, const std::vector<std::string>& params)
 {
-    for (size_t i = 0; i < params.size(); i++)
-        std::cout << "params[" << i << "] = " << params[i] << std::endl;
     if (params.empty() || params.size() < 2)
          return (sendError(client->getClientfd(), "461", "KICK" ,"Not enough parameters"), 1);
 
@@ -21,8 +19,8 @@ int 	Server::handleKick(Client* client, const std::vector<std::string>& params)
     std::string targetName;
     std::stringstream ss(params[1]);
     while(std::getline(ss, targetName, ',')) {
-        // if (targetName.empty())
-        //     return (sendError(client->getClientfd(), "461", "KICK", "Not enough parameters"), 1);
+        if (targetName.empty())
+            return (sendError(client->getClientfd(), "461", "KICK", "Not enough parameters"), 1);
         int new_clientFd = getclientfd(targetName);
             
         if (new_clientFd == -1){
