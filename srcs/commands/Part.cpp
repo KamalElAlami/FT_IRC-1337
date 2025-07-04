@@ -24,6 +24,7 @@ int Server::partUserByUser(Client* client, std::string channel, const std::vecto
         }
         else
         {
+            
             delete this->chanPool[chanIndex];
             this->chanPool.erase(this->chanPool.begin() + chanIndex);
         }
