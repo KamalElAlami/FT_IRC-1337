@@ -17,7 +17,7 @@ int Server::partUserByUser(Client* client, std::string channel, const std::vecto
     if (this->chanPool[chanIndex]->getOperators().size() == 1 && opIndex != -1)
     {
         if (this->chanPool[chanIndex]->getMembers().size() > 1)
-        this->chanPool[chanIndex]->addToContainer(this->chanPool[chanIndex]->getMembers()[0], this->chanPool[chanIndex]->getOperators());
+            this->chanPool[chanIndex]->addToContainer(this->chanPool[chanIndex]->getMembers()[0], this->chanPool[chanIndex]->getOperators());
         else
         {
             delete this->chanPool[chanIndex];
