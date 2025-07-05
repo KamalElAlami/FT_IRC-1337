@@ -23,7 +23,7 @@ void    Server::createChannel(Client* client , std::string channelName, const st
 {
     std::string announce;
     int chanIndex;
-    std::cout << channelName << channelName.size() << std::endl;
+    // std::cout << channelName << channelName.size() << std::endl;
     announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     chanIndex = this->isChannelExist(channelName);
     if (chanIndex == -1)
@@ -37,7 +37,7 @@ void    Server::createChannel(Client* client , std::string channelName, const st
         this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
         return (sendNamesRpl(client, channelName, chanIndex));
     }
-    if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() <= (int)(this->chanPool[chanIndex]->getMembers().size() + 1))
+    if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() < (int)(this->chanPool[chanIndex]->getMembers().size() + 1))//handel an error 
         return (sendToClient(client, "471 " + channelName + " :Cannot join channel (+l)"));
     if (this->chanPool[chanIndex]->getInviteOnly() && !client->isInvited(channelName))
         return (sendToClient(client, "473 " + channelName + " :Cannot join channel (+i)"));

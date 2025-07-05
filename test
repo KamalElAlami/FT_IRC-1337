@@ -1,0 +1,15 @@
+➜  ~ nc -C 127.0.0.1 6667
+PASS 0000
+NUCK aaa
+USER a a a a
+NICK aaa
+:!a@localhost NICK aaa
+-------------------------------------------------------
+fix nick name
+-------------------------------
+fix no such channel instead of no such nick reply
+------------------------------------------------------
+command not valid reply
+-------------------------------------------------------------
+
+questiond

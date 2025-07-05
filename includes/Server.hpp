@@ -20,6 +20,7 @@
 #include <sstream>
 #include <ctime>
 #include <algorithm>
+#include <cstring>
 
 
 class Server
@@ -66,6 +67,7 @@ class Server
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
 		int		handleMode(Client* client, const std::vector<std::string>& params);
 		int		handleSbiksla(Client* client, const std::vector<std::string>& params);
+		int		handelQuit(Client* client, const std::vector<std::string>& params);
 		void	createChannel(Client* client, std::string channelName, const std::vector<std::string>& params);
 		void    createChannel(Client* client , std::string channelName, const std::vector<std::string>& params, std::string pass);
 		void	sendNamesRpl(Client* client, std::string channelName, int chanIndex);
@@ -74,6 +76,9 @@ class Server
 		void	sendToClient(Client* client, const std::string& message);
 		void	checkRegistration(Client* client);
 		void	ClearAll();
+		static void SigHandler(int value);
+		Client * getClient(int clientfd);
+		std::string EraseLine(std::string & src, int pos);
 		/*---- Utiles method's ----*/
 		std::vector<std::string> splitBySpaces(const std::string& middle);
 		int isChannelExist(std::string chanName);
@@ -89,9 +94,9 @@ class Server
 		int		handleInvite(Client *client, const std::vector<std::string> &params);
 		int 	handleKick(Client* client, const std::vector<std::string>& params);
 		void 	sendError(int clientfd, const std::string& errorCode, const std::string &target, const std::string& message);
-		void 	handelkeymode(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel); 
-		void	setUserLimit(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel);
-		void	handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel);
+		void 	handelkeymode(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status); 
+		void	setUserLimit(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status);
+		void	handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status);
 		void	removeChannelFromInvites(std::vector <Client*>	clients, std::string channel);
 		//-------------------------------
 

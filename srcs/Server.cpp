@@ -37,25 +37,19 @@ int	Server::get_Port() const {
 void Server::Start_Server()
 {
 	this->Build_Server();
-	while (true)
+	while (Server::signals == false)
 	{
-		try {
-			if (poll(this->polling.data(), this->polling.size(), -1) == -1)
-				throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
-			for (size_t i = 0; i < this->polling.size(); i++)
-			{
-				if (this->polling[i].revents & POLLIN)
-				{
-					if(this->polling[i].fd == this->SerSockFd)
-						this->handleNewConnection();
-					else
-						this->handleClientMessage(this->polling[i].fd);
-				}
-			}
-		}
-		catch(const std::exception& e)
+		if (poll(this->polling.data(), this->polling.size(), -1) == -1)
+			throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
+		for (size_t i = 0; i < this->polling.size(); i++)
 		{
-			std::cerr << e.what() << std::endl;
+			if (this->polling[i].revents & POLLIN)
+			{
+				if(this->polling[i].fd == this->SerSockFd)
+					this->handleNewConnection();
+				else
+					this->handleClientMessage(this->polling[i].fd);
+			}
 		}
 	}
 }
@@ -128,13 +122,9 @@ void Server::ClearAll()
 //added by soufiix
 Channel *Server::findChannel(const std::string &channelName)const {
 	for (size_t i = 0; i < chanPool.size(); i++){
-		std::cout << "the given: \'"<< channelName << "\' in the server \'" << chanPool[i]->getName() << "\'" << std::endl;
-		if (channelName == chanPool[i]->getName()){
-			std::cout << "succes \n";
+		if (channelName == chanPool[i]->getName())
 			return chanPool[i];
-		}
 	}
-	std::cout << "failure to find channel\n";
 	return NULL;
 }
 

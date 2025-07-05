@@ -16,8 +16,12 @@ int Server::partUserByUser(Client* client, std::string channel, const std::vecto
     int opIndex = this->findUser(client->getNickName(), this->chanPool[chanIndex]->getOperators());
     if (this->chanPool[chanIndex]->getOperators().size() == 1 && opIndex != -1)
     {
-        if (this->chanPool[chanIndex]->getMembers().size() > 1)
-        this->chanPool[chanIndex]->addToContainer(this->chanPool[chanIndex]->getMembers()[0], this->chanPool[chanIndex]->getOperators());
+        if (this->chanPool[chanIndex]->getMembers().size() >= 1){
+            this->chanPool[chanIndex]->addToContainer(this->chanPool[chanIndex]->getMembers()[0], this->chanPool[chanIndex]->getOperators());
+            std::string announce = ":" + client->getNickName() + "!" + "localhost MODE "
+            + this->chanPool[chanIndex]->getName() + " +o " + this->chanPool[chanIndex]->getMembers()[0]->getNickName();
+            broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
+        }
         else
         {
             delete this->chanPool[chanIndex];

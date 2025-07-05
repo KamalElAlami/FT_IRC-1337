@@ -15,3 +15,10 @@ invite logic completely currupted create map key value for every channel in the 
 
 invite should show rpl inside the channel [x]
 
+//==================NEW==========================
+clean code from srd::Cout and comment
+check leaks fd and memory
+test boot
+add filetransfere(bonus)
+separat mandatory/bonus
+FINAL TESTS

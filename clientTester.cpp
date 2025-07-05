@@ -84,6 +84,7 @@ void run_single_client(int client_id, const std::string& host, int port, const s
     // std::cout << "[Client " << client_id << "] Disconnected" << std::endl;
 }
 
+
 int main(int argc, char* argv[]) {
     if (argc != 5) {
         std::cout << "Usage: " << argv[0] << " <host> <port> <password> <num_clients>" << std::endl;
