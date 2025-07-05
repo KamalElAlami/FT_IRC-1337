@@ -57,6 +57,12 @@ void Server::handleClientMessage(int clientFd)
 	Client		*client;
 
 	client = getClient(clientFd);
+	if (!client || client->getRemoveClient() == true)
+	{
+		if(client)
+			this->handleClientDisconnect(clientFd);
+		return ;
+	}
 	client->CustomBuffer();
 	if (client->getRemoveClient() == true)
 	{
