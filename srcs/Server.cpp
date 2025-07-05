@@ -119,7 +119,6 @@ void Server::ClearAll()
 		close(this->polling[i].fd);
 }
 
-//added by soufiix
 Channel *Server::findChannel(const std::string &channelName)const {
 	for (size_t i = 0; i < chanPool.size(); i++){
 		if (channelName == chanPool[i]->getName())

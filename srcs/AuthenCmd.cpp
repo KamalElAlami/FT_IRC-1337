@@ -32,7 +32,6 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
-	// std::cout << "===========\n" << Command << "\n============  params size : " << params.size() << "\n============" <<std::endl;
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -40,10 +39,7 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 	else if (Command == "NICK")
 		this->handleNick(client, params);
 	else if (Command == "USER")
-	{
 		this->handleUser(client, params);
-		// this->checkRegistration(client);
-	}
 	else if (Command == "PING")
 		this->handlePingPong(client, params);
 	else if (Command == "JOIN")
@@ -85,7 +81,7 @@ void Server::checkRegistration(Client* client)
 		this->sendToClient(client, "003 " + client->getNickName() + 
 			" :This server was created just now");
 		this->sendToClient(client, "004 " + client->getNickName() + 
-			" :ircserv 1.0 o o");
+			" :ircserv v1.0");
 			this->sendToClient(client, "****************************************************");
 		std::cout << "Client " << client->getClientfd() << " is now registered as " << client->getNickName() << std::endl;
 	}

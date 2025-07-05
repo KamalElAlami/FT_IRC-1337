@@ -1,3 +1,0 @@
-What is IRC server ?
-How IRC server work ?
-What is socket ?

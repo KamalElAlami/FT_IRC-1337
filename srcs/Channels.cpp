@@ -54,7 +54,7 @@ std::string& Channel::getPassword(void)
 
 void Channel::addToContainer(Client* client, std::vector <Client *>& Container)
 {
-    Container.push_back(client); //  maybe needs protection
+    Container.push_back(client);
 }
 
 int Channel::deleteFromContainer(Client* client, std::vector <Client *>& Container)
@@ -70,8 +70,6 @@ int Channel::deleteFromContainer(Client* client, std::vector <Client *>& Contain
     }
     return (0);
 }
-
-//added by soufiix
 
 void Channel::setEnabledPass(bool stt)
 {

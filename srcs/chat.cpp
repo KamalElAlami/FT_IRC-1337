@@ -2,10 +2,8 @@
 
 AiAgent::AiAgent()
 {
-    // envFile.open(".env");
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
     junkFile = "response";
-    // getline(envFile, api_key);
 }
 
 AiAgent::~AiAgent()

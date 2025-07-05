@@ -49,14 +49,6 @@ std::string Server::EraseLine(std::string & src, int pos)
 	return res;
 }
 
-
-/*
-PASS 0000
-NICK oussama
-USER ....
-*/
-
-
 void Server::handleClientMessage(int clientFd)
 {
 	std::string	line;
