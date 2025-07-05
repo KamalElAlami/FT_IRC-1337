@@ -1,5 +1,5 @@
 #include "../includes/Client.hpp"
-#include <cstring>
+
 Client::Client()
 {
     this->registered = false;

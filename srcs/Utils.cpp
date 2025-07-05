@@ -86,6 +86,5 @@ void Server::SigHandler(int value)
 	(void) value;
 	std::cout << "\n*------------------* Ircserv has ben closed *------------------*" << std::endl;
 	Server::signals = true;
-	//clean all resurses here;
 	exit (0);
 }

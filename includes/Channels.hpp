@@ -20,7 +20,6 @@
 class Channel
 {
     private :
-        //added by soufiix
         time_t      creationTime;
         std::string topicSetBy;
         time_t      topicSetAt;
@@ -41,7 +40,6 @@ class Channel
         std::string& getTopic(void);
         std::vector <Client *>& getMembers(void);
         std::vector <Client *>& getOperators(void);
-        //added by soufiix
         bool hasUser(int client_fd);
         std::string getTopicSetBy()const;
         time_t getTopicSetAt() const;

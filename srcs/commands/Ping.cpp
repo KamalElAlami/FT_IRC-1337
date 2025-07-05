@@ -11,7 +11,3 @@ int	Server::handlePingPong(Client* client, const std::vector<std::string>& param
 	send(client->getClientfd(), FullMsg.c_str(), FullMsg.length(), 0);
 	return 0;
 }
-
-/*
-PRIVMSG kamal : kamal
-*/

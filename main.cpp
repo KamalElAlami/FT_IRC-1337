@@ -1,6 +1,5 @@
 #include "./includes/Server.hpp"
 
-
 int	 Pars_inputs(std::string Port, std::string Pass)
 {
 	double _port;
@@ -25,14 +24,8 @@ int	 Pars_inputs(std::string Port, std::string Pass)
 	return (0);
 }
 
-// void v()
-// {
-// 	system("lsof -c ircserv");	
-// }
-
 int main (int ac, char **av)
 {
-	// atexit(v);
 	if (ac != 3)
 		return (std::cerr << "Error: An argument is missing or empty!" << std::endl, 1);
 
