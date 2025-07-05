@@ -26,19 +26,23 @@ int		Server::handleTopic(Client* client, const std::vector<std::string>& params)
             return (1);
         }
     }
-
+    std::string topic;
     if (params.size() > 1){
         if (_channel->getRestrictedTopic() && !_channel->isOperator(client->getClientfd()))
             return (sendError(client->getClientfd(), "482", channelName ,"You're not an operator in that channel"), 1);
-
-        _channel->setTopic(params[1]);
+        for (size_t i = 1; i < params.size(); i++){
+            topic += params[i];
+            if (i != params.size() - 1)
+                topic += " ";
+        }
+        _channel->setTopic(topic);
         _channel->setTopicSetBy(client->getNickName());
         _channel->setTopicSetAt(std::time(0));
         _channel->setTopicSetAt(time(0));
         std::cout << "TOPIC: " << _channel->getTopic() << std::endl;
     }
 
-    std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost" + " TOPIC " + channelName + " :" + params[1];
+    std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost" + " TOPIC " + channelName + " :" + topic;
     this->broadcastInChannel(_channel->getMembers(), message);
     return 0;
 }
