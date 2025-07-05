@@ -23,7 +23,6 @@ void    Server::createChannel(Client* client , std::string channelName, const st
 {
     std::string announce;
     int chanIndex;
-
     announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "JOIN " + channelName;
     chanIndex = this->isChannelExist(channelName);
     if (chanIndex == -1)
