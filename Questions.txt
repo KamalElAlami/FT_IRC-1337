@@ -1,0 +1,20 @@
+
+
+
+
+
+
+Leaks :
+    bot ?
+
+------------------------------------------------------------------------------------------
+
+What is IRC Server, and how its work ?
+
+
+What is a Port?
+    A port is a communication endpoint that allows different
+    programs to send and receive data over a network. Think
+    of it like a numbered door on a building - each door
+    leads to a different service or application.
+
