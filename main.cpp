@@ -24,8 +24,14 @@ int	 Pars_inputs(std::string Port, std::string Pass)
 	return (0);
 }
 
+void leaks()
+{
+	system("leaks  ircserv");
+}
+
 int main (int ac, char **av)
 {
+	atexit(leaks);
 	if (ac != 3)
 		return (std::cerr << "Error: An argument is missing or empty!" << std::endl, 1);
 
@@ -39,9 +45,12 @@ int main (int ac, char **av)
 		Server server(-1, atoi(av[1]));
 		server.set_Password(av[2]);
 		server.Start_Server();
+		server.ClearAll();
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << '\n';
 	}
+	
+	//std::cout << "pass from here" << std::endl; /*--------------------------------------*/
 }

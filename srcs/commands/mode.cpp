@@ -71,7 +71,7 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
             mode = true;
         else{
             modechar += modestring[i];
-            std::cout << "the mode is " << modechar << std::endl;
+          //  std::cout << "the mode is " << modechar << std::endl;
             sendError(client->getClientfd(), "472",client->getNickName() + " " + modechar, ":is unknown mode char to me");
             modechar.erase();
         }
