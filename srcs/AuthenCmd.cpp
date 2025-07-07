@@ -58,10 +58,10 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handleInvite(client, params);
 	else if (Command == "KICK")
 		this->handleKick(client, params);
-	else if (Command == "QUIT")
-		this->handelQuit(client, params);
 	else if (Command != "WHO")
 		this->sendToClient(client, "421 " + Command + " :Unknown command");
+		// else if (Command == "QUIT")
+		// 	this->handelQuit(client, params);
 }
 
 void Server::checkRegistration(Client* client)

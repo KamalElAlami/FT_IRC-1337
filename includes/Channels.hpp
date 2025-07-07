@@ -63,5 +63,6 @@ class Channel
         void addToContainer(Client* client, std::vector <Client *>& Container);
         int deleteFromContainer(Client* client, std::vector <Client *>& Container);
 
+
 };
 #endif

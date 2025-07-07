@@ -64,6 +64,7 @@ void Server::handleClientMessage(int clientFd)
 		return ;
 	}
 	client->CustomBuffer();
+	// std::cout << "buffer : " << client->getBuffer() << std::endl;
 	if (client->getRemoveClient() == true)
 	{
 		this->handleClientDisconnect(clientFd);
@@ -109,5 +110,6 @@ void	Server::removeClient(int clientFd)
 void Server::handleClientDisconnect(int clientFd)
 {
 	this->removeClient(clientFd);
+	// std::cout << "-------------------------- after removing" << std::endl;
 	std::cout << "Client " << clientFd << " disconnected" << std::endl;
 }
