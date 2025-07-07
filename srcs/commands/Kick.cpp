@@ -48,7 +48,7 @@ int 	Server::handleKick(Client* client, const std::vector<std::string>& params)
         }
             
         std::string comment = (params.size() > 2 && !params[2].empty()) ? ft_reason(params) : "You have been kicked from the channel: Grow UP!";
-        std::string announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost KICK " + params[0] + " " + new_client->getNickName() + " :" + comment;
+        std::string announce = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " KICK " + params[0] + " " + new_client->getNickName() + " :" + comment;
             
         sendToClient(new_client, announce);
         this->broadcastInChannel(_channel->getMembers(), announce);

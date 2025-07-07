@@ -67,7 +67,7 @@ class Server
 		int		handleJoin(Client* client, const std::vector<std::string>& params);
 		int		handleMode(Client* client, const std::vector<std::string>& params);
 		int		handleSbiksla(Client* client, const std::vector<std::string>& params);
-		int		handelQuit(Client* client, const std::vector<std::string>& params);
+		int		handleQuit(Client* client, const std::vector<std::string>& params);
 		void	createChannel(Client* client, std::string channelName, const std::vector<std::string>& params);
 		void    createChannel(Client* client , std::string channelName, const std::vector<std::string>& params, std::string pass);
 		void	sendNamesRpl(Client* client, std::string channelName, int chanIndex);

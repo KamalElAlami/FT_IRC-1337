@@ -8,14 +8,14 @@ int Server::partUserByUser(Client* client, std::string channel, const std::vecto
     int userIndex = this->findUser(client->getNickName(), this->chanPool[chanIndex]->getMembers());
     if (userIndex == -1)
         return (this->sendToClient(client, "442 : You're not on that channel"), 1);
-    std::string reason = "See Later Guys";
+    std::string reason = "See You Later Guys";
     if(params.size() >= 2){
         reason.clear();
         for (size_t i = 1; i < params.size(); i++)
             reason += params[i] + " ";
-        reason.resize(reason.size() - 1);
+        reason.resize(reason.size() - 1); // needs check with soufian
     }
-    std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost PART " + channel + " :" + reason + "\r\n";
+    std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " PART " + channel + " :" + reason + "\r\n";
     this->sendMsgToChannel(client, this->chanPool[chanIndex]->getMembers(), message);
     this->sendToClient(client, message);
     this->chanPool[chanIndex]->deleteFromContainer(this->chanPool[chanIndex]->getMembers()[userIndex], this->chanPool[chanIndex]->getMembers());
@@ -25,7 +25,7 @@ int Server::partUserByUser(Client* client, std::string channel, const std::vecto
         if (this->chanPool[chanIndex]->getMembers().size() >= 1){
             this->chanPool[chanIndex]->addToContainer(this->chanPool[chanIndex]->getMembers()[0], this->chanPool[chanIndex]->getOperators());
             std::string announce = ":" + client->getNickName() + "!" + "localhost MODE "
-            + this->chanPool[chanIndex]->getName() + " +o " + this->chanPool[chanIndex]->getMembers()[0]->getNickName();
+            + this->chanPool[chanIndex]->getName() + " +o " + this->chanPool[chanIndex]->getMembers()[0]->getNickName(); // 2 message variables we can just reuse the first one
             broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
         }
         else

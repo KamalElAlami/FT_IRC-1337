@@ -32,6 +32,10 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
+	std::cout << Command << " ";
+	for (size_t i = 0; i < params.size(); i++)
+		std::cout << params[i] << " ";
+	std::cout <<  std::endl;
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -58,10 +62,11 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handleInvite(client, params);
 	else if (Command == "KICK")
 		this->handleKick(client, params);
-	else if (Command != "WHO")
+	// else if (Command != "WHO")
+	else if (Command == "QUIT")
+		this->handleQuit(client, params);
+	else
 		this->sendToClient(client, "421 " + Command + " :Unknown command");
-		// else if (Command == "QUIT")
-		// 	this->handelQuit(client, params);
 }
 
 void Server::checkRegistration(Client* client)

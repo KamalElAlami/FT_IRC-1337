@@ -32,7 +32,7 @@ int		Server::handleInvite(Client *client, const std::vector<std::string> &params
 
     new_client->createInvite(channelName, true);
     sendToClient(client, "341 " + client->getNickName() + " " + new_client->getNickName() + " " + channelName);
-    std::string announce = ":" + client->getNickName() + "!" + client->getUserName() + "@localhost " + "INVITE " + new_client->getNickName() + " " + channelName;
+    std::string announce = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " INVITE " + new_client->getNickName() + " " + channelName;
     broadcastInChannel(_channel->getMembers(), announce, *client);
     sendToClient(new_client, announce);
     return 0;
