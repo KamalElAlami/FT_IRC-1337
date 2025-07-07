@@ -106,20 +106,35 @@ std::vector<std::string> Server::splitBySpaces(const std::string& middle)
 	return (params);
 }
 
+void Server::emptyContainers(void)
+{
+	while (chanPool.size())
+	{
+		chanPool[0]->getMembers().clear();
+		chanPool[0]->getOperators().clear();
+		delete chanPool[0];
+		chanPool.erase(chanPool.begin());
+	}
+}
+
+
 void Server::ClearAll()
 {
-	std::vector<std::string> params;
-	params.push_back("");
+	// std::vector<std::string> params;
+	// params.push_back("");
+	this->emptyContainers();
+	close(this->SerSockFd);
 	for (int i = this->clients.size() - 1; i > -1; i--)
 	{
-		this->handelQuit(this->clients[i], params);/*-----------------------------*/
+		// this->handelQuit(this->clients[i], params);/*-----------------------------*/
+		close(this->clients[i]->getClientfd());
 		delete this->clients[i];
-		this->clients[i] = NULL;
+		// this->clients[i] = NULL;
 		this->clients.erase(this->clients.begin() + i);
 	}
 
-	for (size_t i = 0; i < this->polling.size(); i++)
-		close(this->polling[i].fd);
+	// for (size_t i = 0; i < this->polling.size(); i++)
+	// 	close(this->polling[i].fd);
 }
 
 Channel *Server::findChannel(const std::string &channelName)const {

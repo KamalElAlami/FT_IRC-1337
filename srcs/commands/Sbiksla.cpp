@@ -15,20 +15,17 @@ int containsDangerousChars(const std::string& prompt)
 
 int		Server::handleSbiksla(Client* client, const std::vector<std::string>& params)
 {
-    // potential leaks and maybe unprotected stuff 
-    // usage : /SBIKSLA #channel_NAME :prompt
-    // /SBIKSLA prvmsg :prompt for dm
     AiAgent a;
     int idx;
     std::string message;
 
-    if (params.empty())
+    if (params.empty() || params.size() != 2)
         return (this->sendToClient(client, "461 :Not enough parameters"), 1);
     if (containsDangerousChars(params[1]))
             return (sendToClient(client, "NOTICE " + client->getNickName() + " :Try rephrasing without special characters like (/;|&$\"\'\\{})"), 1);
 	
     Client *bot = getBotInstance();
-    std::cout << "clients size : " << this->clients.size() << std::endl;
+    // std::cout << "clients size : " << this->clients.size() << std::endl;
     a.setApi("AIzaSyD6izOtFIw6IvaAAKdI7DVy6eARBpefLbY");
     std::string response = a.startAgent(params[1]);
     message = ":" + bot->getNickName() + "!" + bot->getUserName() + "@localhost PRIVMSG " + params[0] + " :" + response + "\r\n";

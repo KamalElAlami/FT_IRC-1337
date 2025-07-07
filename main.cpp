@@ -31,7 +31,7 @@ void leaks()
 
 int main (int ac, char **av)
 {
-	atexit(leaks);
+	// atexit(leaks);
 	if (ac != 3)
 		return (std::cerr << "Error: An argument is missing or empty!" << std::endl, 1);
 

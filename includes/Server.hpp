@@ -99,6 +99,7 @@ class Server
 		void	handelChannelOperator(Client *client, const std::vector<std::string>&params, size_t &argindex, bool mode, Channel &_channel, bool &status);
 		void	removeChannelFromInvites(std::vector <Client*>	clients, std::string channel);
 		//-------------------------------
+		void emptyContainers(void);
 
 };
 
