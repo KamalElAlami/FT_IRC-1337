@@ -8,7 +8,6 @@ AiAgent::AiAgent()
 
 AiAgent::~AiAgent()
 {
-    envFile.close();
 }
 
 void AiAgent::setApi(std::string api)
@@ -48,7 +47,7 @@ std::string AiAgent::startAgent(std::string prompt)
     if (api_key.empty())
         throw std::runtime_error("API key is not set. Please set it using setApi() method.\n");
     std::string response;
-    std::string instruction = "you are a helpful assistant named sbiksla in a irc server you keep you answers short as you can keep it funny a bit you can add some emogies to your answers : ";
+    std::string instruction = "you are a helpful assistant named sbiksla in a irc server you keep you answers short you can add some emogies to your answers : ";
     std::string payload = "{\"contents\":[{\"parts\":[{\"text\":\"" + instruction + prompt + "\"}]}]}";
     std::string exec = "curl -s -X POST \"" + url + "?key=" + api_key + "\" -H \"Content-Type: application/json\" -d '" +  payload + "'" + " > " + junkFile;
     system(exec.c_str());
@@ -57,7 +56,7 @@ std::string AiAgent::startAgent(std::string prompt)
     }
     catch (const std::runtime_error& e)
     {
-        std::cout << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
     return (response);
 }

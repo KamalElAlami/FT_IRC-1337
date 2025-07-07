@@ -44,7 +44,6 @@ void Server::sendMsgToChannel(Client* client, std::vector <Client *> members, st
     {
         if (client->getClientfd() == members[i]->getClientfd())
             continue;
-        std::cout << members[i]->getNickName() << std::endl;
         send(members[i]->getClientfd(), message.c_str(), message.length(), 0);
     }
 }
@@ -86,5 +85,13 @@ void Server::SigHandler(int value)
 	(void) value;
 	std::cout << "\n*------------------* Ircserv has ben closed *------------------*" << std::endl;
 	Server::signals = true;
-	exit (0);
+	//Server::ClearAll();
+	//for (size_t i = 0; i < clients.size(); i++)
+	//{
+	//	/* code */
+	//}
+	
+	//handelQuit(); // Removed 'this->' since it's a non-static member function
+	//ClearAll(); // Now this can be called without 'this->'
+	//exit (0);
 }

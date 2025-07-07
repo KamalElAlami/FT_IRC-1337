@@ -26,11 +26,13 @@ int		Server::handleSbiksla(Client* client, const std::vector<std::string>& param
         return (this->sendToClient(client, "461 :Not enough parameters"), 1);
     if (containsDangerousChars(params[1]))
             return (sendToClient(client, "NOTICE " + client->getNickName() + " :Try rephrasing without special characters like (/;|&$\"\'\\{})"), 1);
+	
     Client *bot = getBotInstance();
+    std::cout << "clients size : " << this->clients.size() << std::endl;
     a.setApi("AIzaSyD6izOtFIw6IvaAAKdI7DVy6eARBpefLbY");
     std::string response = a.startAgent(params[1]);
     message = ":" + bot->getNickName() + "!" + bot->getUserName() + "@localhost PRIVMSG " + params[0] + " :" + response + "\r\n";
-    std::cout << "Response: " << message << std::endl;
+//    std::cout << "Response: " << message << std::endl;
     if (params[0][0] == '#')
 	{
 		idx = this->isChannelExist(params[0]);

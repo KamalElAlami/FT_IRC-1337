@@ -39,9 +39,9 @@ void Server::Start_Server()
 	this->Build_Server();
 	while (Server::signals == false)
 	{
-		if (poll(this->polling.data(), this->polling.size(), -1) == -1)
+		if (poll(this->polling.data(), this->polling.size(), -1) == -1 && Server::signals == false)
 			throw std::runtime_error( "Error: Failed to monitor file descriptors using poll()");
-		for (size_t i = 0; i < this->polling.size(); i++)
+		for (size_t i = 0;Server::signals == false && i < this->polling.size(); i++)
 		{
 			if (this->polling[i].revents & POLLIN)
 			{
@@ -108,8 +108,11 @@ std::vector<std::string> Server::splitBySpaces(const std::string& middle)
 
 void Server::ClearAll()
 {
+	std::vector<std::string> params;
+	params.push_back("");
 	for (int i = this->clients.size() - 1; i > -1; i--)
 	{
+		this->handelQuit(this->clients[i], params);/*-----------------------------*/
 		delete this->clients[i];
 		this->clients[i] = NULL;
 		this->clients.erase(this->clients.begin() + i);
@@ -150,7 +153,7 @@ void Server::sendError(int clientfd, const std::string& errorCode, const std::st
 
 Client* Server::getBotInstance(void) {
     if (agent == NULL) 
-{
+	{
         agent = new Client();
         agent->setNickName("Sbiksla");
         agent->setUserName("Sbiksla");
