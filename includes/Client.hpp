@@ -52,20 +52,9 @@ class Client
 		std::string	getHostName() const;
 		bool		getRegistered() const;
 		std::map <std::string, bool> getInvites();
-		/*------------------------------------------- oussama*/
 		void setBuffer(std::string value);
 		std::string getBuffer();
 		void CustomBuffer();
-
-
-
-	void sendMessage(const std::string& message) {
-        std::string formatted_message = ":" + nickName + " " + message + "\r\n";
-        ssize_t bytes_sent = send(Clientfd, formatted_message.c_str(), formatted_message.length(), 0);
-        if (bytes_sent == -1) {
-            std::cout << "Error sending message to client " << nickName << std::endl;
-        }
-}
 };
 
 #endif

@@ -60,8 +60,5 @@ class Channel
         std::string& getPassword(void);
         void addToContainer(Client* client, std::vector <Client *>& Container);
         int deleteFromContainer(Client* client, std::vector <Client *>& Container);
-        
-
-
 };
 #endif
