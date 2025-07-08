@@ -18,11 +18,11 @@ int		Server::handleTopic(Client* client, const std::vector<std::string>& params)
         if (_channel->getTopic().empty())
             return (sendError(client->getClientfd(), "331", channelName, ":No topic is set"), 1);
         else{
-            std::ostringstream oss;
-            oss << _channel->getTopicSetAt();
-            std::string TopicSetAt = oss.str();
+            time_t timestamp = _channel->getTopicSetAt();
+            char buffer[64];
+            std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
             sendToClient(client, "332 "+ client->getNickName() + " " + channelName + " :" + _channel->getTopic());
-            sendToClient(client, "333 " + channelName + " " + _channel->getTopicSetBy() + " " + TopicSetAt);
+            sendToClient(client, "333 " + channelName + " " + _channel->getTopicSetBy() + " " + buffer);
             return (1);
         }
     }
@@ -30,11 +30,7 @@ int		Server::handleTopic(Client* client, const std::vector<std::string>& params)
     if (params.size() > 1){
         if (_channel->getRestrictedTopic() && !_channel->isOperator(client->getClientfd()))
             return (sendError(client->getClientfd(), "482", channelName ,"You're not an operator in that channel"), 1);
-        for (size_t i = 1; i < params.size(); i++){
-            topic += params[i];
-            if (i != params.size() - 1)
-                topic += " ";
-        }
+        topic = params[1];
         _channel->setTopic(topic);
         _channel->setTopicSetBy(client->getNickName());
         _channel->setTopicSetAt(std::time(0));

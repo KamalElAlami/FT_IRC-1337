@@ -6,6 +6,7 @@ Server::Server(int _fd, int _Port) : SerSockFd(_fd), Port(_Port), agent(NULL) {
 Server::~Server()
 {
 	delete this->agent;
+	this->ClearAll();
 }
 Server::Server(Server const & src)
 {
@@ -75,8 +76,8 @@ void Server::Build_Server()
 	if (setsockopt(this->SerSockFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
 		throw std::runtime_error( "Error: Failed to set socket options using setsockopt()");\
 	
-	if (fcntl(this->SerSockFd, F_SETFL, O_NONBLOCK) == -1)
-		throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));
+	// if (fcntl(this->SerSockFd, F_SETFL, O_NONBLOCK) == -1)
+	// 	throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));
 
 	if (bind(this->SerSockFd, (sockaddr *)&addr, sizeof(addr)))
 		throw std::runtime_error( "Error: Failed to bind socket to address using bind()");

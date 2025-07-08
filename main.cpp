@@ -45,7 +45,7 @@ int main (int ac, char **av)
 		Server server(-1, atoi(av[1]));
 		server.set_Password(av[2]);
 		server.Start_Server();
-		server.ClearAll();
+		// server.ClearAll();
 	}
 	catch(const std::exception& e)
 	{

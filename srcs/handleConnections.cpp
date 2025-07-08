@@ -90,8 +90,8 @@ void	Server::removeClient(int clientFd)
 	{
 		if (this->clients[i]->getClientfd() == clientFd)
 		{
+			close (clientFd);
 			delete this->clients[i];
-			this->clients[i] = NULL;
 			this->clients.erase(this->clients.begin() + i);
 			break;
 		}
@@ -104,7 +104,6 @@ void	Server::removeClient(int clientFd)
 			break;
 		}
 	}
-	close (clientFd);
 }
 
 void Server::handleClientDisconnect(int clientFd)

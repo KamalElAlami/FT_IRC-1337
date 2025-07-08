@@ -62,7 +62,6 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 		this->handleInvite(client, params);
 	else if (Command == "KICK")
 		this->handleKick(client, params);
-	// else if (Command != "WHO")
 	else if (Command == "QUIT")
 		this->handleQuit(client, params);
 	else

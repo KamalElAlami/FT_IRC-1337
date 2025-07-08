@@ -8,13 +8,7 @@ int Server::partUserByUser(Client* client, std::string channel, const std::vecto
     int userIndex = this->findUser(client->getNickName(), this->chanPool[chanIndex]->getMembers());
     if (userIndex == -1)
         return (this->sendToClient(client, "442 : You're not on that channel"), 1);
-    std::string reason = "See You Later Guys";
-    if(params.size() >= 2){
-        reason.clear();
-        for (size_t i = 1; i < params.size(); i++)
-            reason += params[i] + " ";
-        reason.resize(reason.size() - 1); // needs check with soufian
-    }
+    std::string reason = (params.size() > 1) ? params[1] : "See You Later Guys";
     std::string message = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " PART " + channel + " :" + reason + "\r\n";
     this->sendMsgToChannel(client, this->chanPool[chanIndex]->getMembers(), message);
     this->sendToClient(client, message);

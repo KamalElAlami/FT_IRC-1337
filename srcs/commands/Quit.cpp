@@ -38,13 +38,6 @@ int Server::handleQuit(Client* client, const std::vector<std::string>& params)
                 this->chanPool[i]->deleteFromContainer(this->chanPool[i]->getOperators()[opIndex], this->chanPool[i]->getOperators());
         }
     }
-    // i have to check this part with oussama
-    int clientIdx = findUser(client->getNickName(), this->clients);
-    if (clientIdx != -1)
-    {
-        close(client->getClientfd());
-        delete clients[clientIdx];
-        clients.erase(clients.begin() + clientIdx);
-    }
+    this->removeClient(client->getClientfd());
     return (0);
 }

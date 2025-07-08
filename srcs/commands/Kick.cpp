@@ -1,13 +1,5 @@
 #include "../../includes/Server.hpp"
 
-std::string ft_reason(const std::vector<std::string>& params){
-    std::string reason;
-    for (size_t i = 2; i < params.size(); i++){
-        reason += params[i] + " ";
-    }
-    reason.resize(reason.size() - 1);
-    return reason;
-}
 int 	Server::handleKick(Client* client, const std::vector<std::string>& params)
 {
     if (params.empty() || params.size() < 2)
@@ -47,7 +39,7 @@ int 	Server::handleKick(Client* client, const std::vector<std::string>& params)
             continue;
         }
             
-        std::string comment = (params.size() > 2 && !params[2].empty()) ? ft_reason(params) : "You have been kicked from the channel: Grow UP!";
+        std::string comment = (params.size() > 2 && !params[2].empty()) ? params[2] : "You have been kicked from the channel: Grow UP!";
         std::string announce = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " KICK " + params[0] + " " + new_client->getNickName() + " :" + comment;
             
         sendToClient(new_client, announce);
