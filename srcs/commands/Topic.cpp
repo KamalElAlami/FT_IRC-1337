@@ -18,11 +18,11 @@ int		Server::handleTopic(Client* client, const std::vector<std::string>& params)
         if (_channel->getTopic().empty())
             return (sendError(client->getClientfd(), "331", channelName, ":No topic is set"), 1);
         else{
-            std::ostringstream oss;
-            oss << _channel->getTopicSetAt();
-            std::string TopicSetAt = oss.str();
+            time_t timestamp = _channel->getTopicSetAt();
+            char buffer[64];
+            std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
             sendToClient(client, "332 "+ client->getNickName() + " " + channelName + " :" + _channel->getTopic());
-            sendToClient(client, "333 " + channelName + " " + _channel->getTopicSetBy() + " " + TopicSetAt);
+            sendToClient(client, "333 " + channelName + " " + _channel->getTopicSetBy() + " " + buffer);
             return (1);
         }
     }
