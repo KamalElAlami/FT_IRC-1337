@@ -10,7 +10,7 @@ int Server::handleQuit(Client* client, const std::vector<std::string>& params)
     else
         reason = params[0];
     announce = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " QUIT :" + reason;
-    std::cout << announce << std::endl;
+    // std::cout << announce << std::endl;
     for (size_t i = 0; i < chanPool.size(); i++)
     {
         int userIndex = findUser(client->getNickName(), chanPool[i]->getMembers());
