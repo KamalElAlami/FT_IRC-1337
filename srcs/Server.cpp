@@ -75,9 +75,6 @@ void Server::Build_Server()
 	int opt = 1;
 	if (setsockopt(this->SerSockFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
 		throw std::runtime_error( "Error: Failed to set socket options using setsockopt()");\
-	
-	// if (fcntl(this->SerSockFd, F_SETFL, O_NONBLOCK) == -1)
-	// 	throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));
 
 	if (bind(this->SerSockFd, (sockaddr *)&addr, sizeof(addr)))
 		throw std::runtime_error( "Error: Failed to bind socket to address using bind()");
@@ -121,21 +118,15 @@ void Server::emptyContainers(void)
 
 void Server::ClearAll()
 {
-	// std::vector<std::string> params;
-	// params.push_back("");
 	this->emptyContainers();
 	close(this->SerSockFd);
 	for (int i = this->clients.size() - 1; i > -1; i--)
 	{
-		// this->handelQuit(this->clients[i], params);/*-----------------------------*/
 		close(this->clients[i]->getClientfd());
 		delete this->clients[i];
-		// this->clients[i] = NULL;
 		this->clients.erase(this->clients.begin() + i);
 	}
 
-	// for (size_t i = 0; i < this->polling.size(); i++)
-	// 	close(this->polling[i].fd);
 }
 
 Channel *Server::findChannel(const std::string &channelName)const {
@@ -185,7 +176,7 @@ void	Server::removeChannelFromInvites(std::vector <Client*>	clients, std::string
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (clients[i]->getInvites().count(channel)) //check
+		if (clients[i]->getInvites().count(channel))
 			clients[i]->getInvites().erase(channel);
 	}
 }

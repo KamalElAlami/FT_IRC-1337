@@ -23,7 +23,6 @@ class Channel
         time_t      creationTime;
         std::string topicSetBy;
         time_t      topicSetAt;
-        //--------------------------
         std::string name;
         std::string topic;
         bool        inviteOnly;
@@ -53,7 +52,6 @@ class Channel
         void setEnabledPass(bool stt);
         void setMemberLimit(int n);
         void setCreationTime(time_t tt);
-        // -------------------------
         time_t& getCreationTime(void);
         bool& getInviteOnly(void);
         bool& getRestrictedTopic(void);
@@ -62,6 +60,7 @@ class Channel
         std::string& getPassword(void);
         void addToContainer(Client* client, std::vector <Client *>& Container);
         int deleteFromContainer(Client* client, std::vector <Client *>& Container);
+        
 
 
 };

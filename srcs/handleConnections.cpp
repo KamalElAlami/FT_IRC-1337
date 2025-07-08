@@ -8,8 +8,10 @@ void Server::handleNewConnection()
 	socklen_t addr_len = sizeof(addr);
 
 	_client.setClientfd(accept(this->SerSockFd, (struct sockaddr *)&addr, &addr_len));
-	if (_client.getClientfd() == -1)
-		throw std::runtime_error( "Error: Failed to accept new connection using accept()");
+	if (_client.getClientfd() == -1) {
+		std::cerr << "Worning: Accept: Failed to accept new connection using accept()" << std::endl;
+		return ;
+	}
 
 	_client.setAddress(inet_ntoa(addr.sin_addr));
 	Client *tmp = new Client(_client);
@@ -64,7 +66,6 @@ void Server::handleClientMessage(int clientFd)
 		return ;
 	}
 	client->CustomBuffer();
-	// std::cout << "buffer : " << client->getBuffer() << std::endl;
 	if (client->getRemoveClient() == true)
 	{
 		this->handleClientDisconnect(clientFd);
@@ -77,10 +78,6 @@ void Server::handleClientMessage(int clientFd)
 		client->setBuffer(data);
 		if (!line.empty())
 			this->ParseCommand(client, line);
-		if (client->getRemoveClient() == true) {
-			this->handleClientDisconnect(clientFd);
-			return ;
-		}
 	}
 }
 
@@ -106,9 +103,37 @@ void	Server::removeClient(int clientFd)
 	}
 }
 
+void Server::kickClient(int fd)
+{
+	Client *client = getClient(fd);
+	std::vector<Channel *>::iterator it;
+    for (it = this->chanPool.begin(); it != this->chanPool.end();){
+        (*it)->deleteFromContainer(client, (*it)->getMembers());
+        (*it)->deleteFromContainer(client, (*it)->getOperators());
+		std::string announce = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " QUIT :leaving!";
+		broadcastInChannel((*it)->getMembers(), announce);
+        if ((*it)->getOperators().empty()){
+            if ((*it)->getMembers().size() >= 1){
+                (*it)->addToContainer((*it)->getMembers()[0], (*it)->getOperators());
+                std::string announce = ":" + client->getNickName() + "!" + "localhost MODE "
+                + (*it)->getName() + " +o " + (*it)->getMembers()[0]->getNickName();
+             	broadcastInChannel((*it)->getMembers(), announce);
+             	it++;
+            }
+            else{
+                delete(*it);
+                it = this->chanPool.erase(it);
+                continue;
+            }
+        }
+        else
+            it++;
+    }
+}
+
 void Server::handleClientDisconnect(int clientFd)
 {
+	kickClient(clientFd);
 	this->removeClient(clientFd);
-	// std::cout << "-------------------------- after removing" << std::endl;
 	std::cout << "Client " << clientFd << " disconnected" << std::endl;
 }

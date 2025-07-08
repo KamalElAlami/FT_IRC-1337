@@ -23,7 +23,6 @@ void Server::displayModes(Client* client, Channel* channel)
     }
     sendToClient(client, "324 " + client->getNickName() + " " + channel->getName() + " " + modes + Params);
     sendToClient(client, "329 " + client->getNickName() + " " + channel->getName() + " " + creationTime.str());
-
 }
 
 int		Server::handleMode(Client* client, const std::vector<std::string>& params)
@@ -71,7 +70,6 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
             mode = true;
         else{
             modechar += modestring[i];
-          //  std::cout << "the mode is " << modechar << std::endl;
             sendError(client->getClientfd(), "472",client->getNickName() + " " + modechar, ":is unknown mode char to me");
             modechar.erase();
         }
@@ -84,7 +82,6 @@ int		Server::handleMode(Client* client, const std::vector<std::string>& params)
             status = false;
         }
     }
-
     return (0);
 }
 

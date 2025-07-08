@@ -85,13 +85,4 @@ void Server::SigHandler(int value)
 	(void) value;
 	std::cout << "\n*------------------* Ircserv has ben closed *------------------*" << std::endl;
 	Server::signals = true;
-	//Server::ClearAll();
-	//for (size_t i = 0; i < clients.size(); i++)
-	//{
-	//	/* code */
-	//}
-	
-	//handelQuit(); // Removed 'this->' since it's a non-static member function
-	//ClearAll(); // Now this can be called without 'this->'
-	//exit (0);
 }

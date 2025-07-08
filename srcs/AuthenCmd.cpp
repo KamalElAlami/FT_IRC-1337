@@ -32,10 +32,12 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 			params = this->splitBySpaces(middle);
 		}
 	}
+	/*-----------------------remove-------------------*/
 	std::cout << Command << " ";
 	for (size_t i = 0; i < params.size(); i++)
-		std::cout << params[i] << " ";
+	std::cout << params[i] << " ";
 	std::cout <<  std::endl;
+	/*------------------------------------------------*/
 	if (Command == "PASS")
 		this->handlePass(client, params);
 	else if (Command == "CAP")
@@ -70,10 +72,8 @@ void	Server::ParseCommand(Client* client, std::string const & line)
 
 void Server::checkRegistration(Client* client)
 {
-	if (client->getRemoveClient() == true)
-		this->removeClient(client->getClientfd());
-	else if (!client->getUserName().empty() && !client->getNickName().empty() && !client->getPassword().empty()
-		&& client->getPassword() == this->Password && client->getRegistered() == false)
+	if (!client->getUserName().empty() && !client->getNickName().empty() && !client->getPassword().empty()
+		&& client->getPassword() == this->Password && client->getRegistered() == false && client->getRemoveClient() == false)
 	{
 		client->setRegistered(true);
 		this->sendToClient(client, "****************************************************");

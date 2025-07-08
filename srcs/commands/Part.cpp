@@ -19,7 +19,7 @@ int Server::partUserByUser(Client* client, std::string channel, const std::vecto
         if (this->chanPool[chanIndex]->getMembers().size() >= 1){
             this->chanPool[chanIndex]->addToContainer(this->chanPool[chanIndex]->getMembers()[0], this->chanPool[chanIndex]->getOperators());
             std::string announce = ":" + client->getNickName() + "!" + "localhost MODE "
-            + this->chanPool[chanIndex]->getName() + " +o " + this->chanPool[chanIndex]->getMembers()[0]->getNickName(); // 2 message variables we can just reuse the first one
+            + this->chanPool[chanIndex]->getName() + " +o " + this->chanPool[chanIndex]->getMembers()[0]->getNickName();
             broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
         }
         else

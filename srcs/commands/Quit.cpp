@@ -10,7 +10,6 @@ int Server::handleQuit(Client* client, const std::vector<std::string>& params)
     else
         reason = params[0];
     announce = ":" + client->getNickName() + "!" + client->getUserName() + "@" + client->getHostName() + " QUIT :" + reason;
-    // std::cout << announce << std::endl;
     for (size_t i = 0; i < chanPool.size(); i++)
     {
         int userIndex = findUser(client->getNickName(), chanPool[i]->getMembers());
@@ -38,6 +37,6 @@ int Server::handleQuit(Client* client, const std::vector<std::string>& params)
                 this->chanPool[i]->deleteFromContainer(this->chanPool[i]->getOperators()[opIndex], this->chanPool[i]->getOperators());
         }
     }
-    this->removeClient(client->getClientfd());
+    client->setRemoveClient(true);
     return (0);
 }

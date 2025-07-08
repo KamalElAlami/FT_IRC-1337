@@ -49,6 +49,5 @@ int 	Server::handleKick(Client* client, const std::vector<std::string>& params)
         _channel->deleteFromContainer(new_client, _channel->getOperators());
         _channel->deleteFromContainer(new_client, _channel->getMembers());
     }
-
     return 0;
 }

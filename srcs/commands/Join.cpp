@@ -36,7 +36,7 @@ void    Server::createChannel(Client* client , std::string channelName, const st
         this->broadcastInChannel(this->chanPool[chanIndex]->getMembers(), announce);
         return (sendNamesRpl(client, channelName, chanIndex));
     }
-    if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() < (int)(this->chanPool[chanIndex]->getMembers().size() + 1))//handel an error 
+    if (this->chanPool[chanIndex]->getMemberLimit() != -1 && this->chanPool[chanIndex]->getMemberLimit() < (int)(this->chanPool[chanIndex]->getMembers().size() + 1))
         return (sendToClient(client, "471 " + channelName + " :Cannot join channel (+l)"));
     if (this->chanPool[chanIndex]->getInviteOnly() && !client->isInvited(channelName))
         return (sendToClient(client, "473 " + channelName + " :Cannot join channel (+i)"));
@@ -104,10 +104,9 @@ int Server::handleJoin(Client* client, const std::vector<std::string>& params)
                 createChannel(client, canals[i], params);
             else
             {
-                std::vector<std::string> pass = ft_split(params[1], ','); // split multiple passwords pass1,pass2,pass3
+                std::vector<std::string> pass = ft_split(params[1], ',');
                 createChannel(client, canals[i], params, pass[i]);
             }
-
         }
     }
     else
